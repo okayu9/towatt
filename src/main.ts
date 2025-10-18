@@ -1,6 +1,12 @@
 (() => {
   type ViewMode = "setup" | "calculation";
   type SourceSelection = "preset" | "manual" | null;
+  type CalculationStep = "source" | "time" | "result";
+
+  interface CalculationResult {
+    targetSeconds: number;
+    sourcePreview: { minutes: number; seconds: number; totalSeconds: number };
+  }
 
   const TARGET_PARAM = "target";
   const POWER_MIN = 100;
@@ -16,7 +22,8 @@
     sourceSelection: SourceSelection;
     bookmarkTimer: number | null;
     errorTimer: number | null;
-    lastScrollToken: string | null;
+    calculationStep: CalculationStep;
+    lastResult: CalculationResult | null;
   }
 
   const state: AppState = {
@@ -27,7 +34,8 @@
     sourceSelection: null,
     bookmarkTimer: null,
     errorTimer: null,
-    lastScrollToken: null,
+    calculationStep: "source",
+    lastResult: null,
   };
 
   const presetButtons = Array.from(
@@ -40,8 +48,23 @@
     setupForm: document.getElementById("setup-form") as HTMLFormElement,
     setupTargetInput: document.getElementById("setup-target-input") as HTMLInputElement,
     bookmarkToast: document.getElementById("bookmark-toast") as HTMLElement,
-    bookmarkUrlValue: document.getElementById("bookmark-url-value") as HTMLElement,
-    targetPowerValue: document.getElementById("target-power-value") as HTMLElement,
+    targetPowerValues: Array.from(
+      document.querySelectorAll<HTMLElement>("[data-bind='target-power']")
+    ),
+    bookmarkUrlValues: Array.from(
+      document.querySelectorAll<HTMLElement>("[data-bind='bookmark-url']")
+    ),
+    sourcePowerIndicators: Array.from(
+      document.querySelectorAll<HTMLElement>("[data-bind='source-power']")
+    ),
+    sourceStep: document.getElementById("source-step") as HTMLElement,
+    timeStep: document.getElementById("time-step") as HTMLElement,
+    resultStep: document.getElementById("result-step") as HTMLElement,
+    sourceNextButton: document.getElementById("source-next-button") as HTMLButtonElement,
+    timeBackButton: document.getElementById("time-back-button") as HTMLButtonElement,
+    timeClearButton: document.getElementById("time-clear-button") as HTMLButtonElement,
+    resultEditTimeButton: document.getElementById("result-edit-time") as HTMLButtonElement,
+    resultEditSourceButton: document.getElementById("result-edit-source") as HTMLButtonElement,
     manualSourceInput: document.getElementById("manual-source-input") as HTMLInputElement,
     timeDisplay: document.getElementById("time-display") as HTMLElement,
     timeGuidance: document.getElementById("time-guidance") as HTMLElement,
@@ -102,6 +125,11 @@
     });
     elements.manualSourceInput.addEventListener("input", handleManualSourceInput);
     elements.keypad.addEventListener("click", handleKeypadClick);
+    elements.sourceNextButton.addEventListener("click", handleSourceNext);
+    elements.timeBackButton.addEventListener("click", () => goToStep("source"));
+    elements.timeClearButton.addEventListener("click", handleTimeClear);
+    elements.resultEditTimeButton.addEventListener("click", handleResultEditTime);
+    elements.resultEditSourceButton.addEventListener("click", () => goToStep("source"));
   }
 
   function handleSetupSubmit(event: Event): void {
@@ -113,6 +141,11 @@
     }
     state.targetPower = value;
     state.viewMode = "calculation";
+    state.calculationStep = "source";
+    state.sourcePower = null;
+    state.sourceSelection = null;
+    state.rawTimeInput = "";
+    state.lastResult = null;
     updateTargetUrl(value);
     renderAll();
     showBookmarkNotice();
@@ -131,9 +164,22 @@
   }
 
   function setSourcePower(power: number | null): void {
+    const previous = state.sourcePower;
     state.sourcePower = power;
     renderSourcePowerSection();
-    attemptCalculation();
+
+    if (power === null) {
+      state.lastResult = null;
+      renderResultSection();
+      if (state.calculationStep !== "source") {
+        goToStep("source");
+      }
+      return;
+    }
+
+    if (state.rawTimeInput.length === TIME_DIGITS || previous !== power) {
+      attemptCalculation();
+    }
   }
 
   function handleManualSourceInput(event: Event): void {
@@ -142,23 +188,18 @@
     state.sourceSelection = trimmed === "" ? null : "manual";
 
     if (trimmed === "") {
-      state.sourcePower = null;
-      renderSourcePowerSection();
-      renderResultSection();
+      setSourcePower(null);
       return;
     }
 
     const value = Number(trimmed);
     if (!isValidPower(value)) {
-      state.sourcePower = null;
-      renderSourcePowerSection();
+      setSourcePower(null);
       showError("ワット数は100〜3000の範囲で指定してください");
       return;
     }
 
-    state.sourcePower = value;
-    renderSourcePowerSection();
-    attemptCalculation();
+    setSourcePower(value);
   }
 
   function handleKeypadClick(event: MouseEvent): void {
@@ -185,9 +226,12 @@
 
   function clearRawInput(): void {
     state.rawTimeInput = "";
-    state.lastScrollToken = null;
+    state.lastResult = null;
     renderTimeSection();
     renderResultSection();
+    if (state.calculationStep === "result") {
+      goToStep("time");
+    }
   }
 
   function removeLastDigit(): void {
@@ -195,7 +239,7 @@
       return;
     }
     state.rawTimeInput = state.rawTimeInput.slice(0, -1);
-    state.lastScrollToken = null;
+    state.lastResult = null;
     renderTimeSection();
     renderResultSection();
   }
@@ -207,18 +251,37 @@
     state.rawTimeInput += digit;
     renderTimeSection();
     if (state.rawTimeInput.length === TIME_DIGITS) {
-      attemptCalculation({ scrollResult: true });
+      attemptCalculation();
     } else {
+      state.lastResult = null;
       renderResultSection();
     }
   }
 
-  function attemptCalculation(options?: { scrollResult?: boolean }): void {
+  function handleSourceNext(): void {
+    if (state.sourcePower === null) {
+      showError("弁当ラベルのワット数を選択してください");
+      return;
+    }
+    goToStep("time");
+  }
+
+  function handleTimeClear(): void {
+    clearRawInput();
+  }
+
+  function handleResultEditTime(): void {
+    clearRawInput();
+  }
+
+  function attemptCalculation(): void {
     if (state.rawTimeInput.length !== TIME_DIGITS) {
+      state.lastResult = null;
       renderResultSection();
       return;
     }
     if (state.sourcePower === null || state.targetPower === null) {
+      state.lastResult = null;
       renderResultSection();
       showError("ワット数と時間を入力してください");
       return;
@@ -234,19 +297,18 @@
     const ratio = state.sourcePower / state.targetPower;
     const targetSeconds = Math.round(ratio * sourceTime.totalSeconds);
     if (targetSeconds <= 0) {
+      state.lastResult = null;
       renderResultSection();
       showError("加熱時間は1秒以上で指定してください");
       return;
     }
 
-    renderResultSection({ targetSeconds, sourcePreview: sourceTime });
+    const result: CalculationResult = { targetSeconds, sourcePreview: sourceTime };
+    state.lastResult = result;
+    renderResultSection(result);
 
-    if (options?.scrollResult) {
-      const token = `${state.sourcePower}-${state.targetPower}-${state.rawTimeInput}`;
-      if (state.lastScrollToken !== token) {
-        elements.resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        state.lastScrollToken = token;
-      }
+    if (state.viewMode === "calculation" && state.calculationStep !== "result") {
+      goToStep("result");
     }
   }
 
@@ -268,12 +330,21 @@
     };
   }
 
+  function goToStep(step: CalculationStep): void {
+    if (state.viewMode !== "calculation") {
+      return;
+    }
+    state.calculationStep = step;
+    renderCalculationStepVisibility();
+  }
+
   function renderAll(): void {
     toggleViews();
     renderTargetSection();
     renderSourcePowerSection();
     renderTimeSection();
     renderResultSection();
+    renderCalculationStepVisibility();
   }
 
   function toggleViews(): void {
@@ -283,12 +354,27 @@
 
   function renderTargetSection(): void {
     if (state.targetPower === null) {
-      elements.targetPowerValue.textContent = "---";
-      elements.bookmarkUrlValue.textContent = "?target=";
+      elements.targetPowerValues.forEach((element) => {
+        element.textContent = "---";
+      });
+      elements.bookmarkUrlValues.forEach((element) => {
+        element.textContent = `?${TARGET_PARAM}=`;
+      });
       return;
     }
-    elements.targetPowerValue.textContent = String(state.targetPower);
-    elements.bookmarkUrlValue.textContent = `?${TARGET_PARAM}=${state.targetPower}`;
+    const targetText = String(state.targetPower);
+    elements.targetPowerValues.forEach((element) => {
+      element.textContent = targetText;
+    });
+    elements.bookmarkUrlValues.forEach((element) => {
+      element.textContent = `?${TARGET_PARAM}=${targetText}`;
+    });
+  }
+
+  function renderCalculationStepVisibility(): void {
+    elements.sourceStep.hidden = state.calculationStep !== "source";
+    elements.timeStep.hidden = state.calculationStep !== "time";
+    elements.resultStep.hidden = state.calculationStep !== "result";
   }
 
   function renderSourcePowerSection(): void {
@@ -301,6 +387,12 @@
     if (state.sourceSelection === "preset") {
       elements.manualSourceInput.value = "";
     }
+
+    const powerLabel = state.sourcePower === null ? "---" : String(state.sourcePower);
+    elements.sourcePowerIndicators.forEach((element) => {
+      element.textContent = powerLabel;
+    });
+    elements.sourceNextButton.disabled = state.sourcePower === null;
   }
 
   function renderTimeSection(): void {
@@ -315,31 +407,32 @@
         .toString()
         .padStart(2, "0")}秒`;
       elements.timePreviewSeconds.textContent = `合計 ${preview.totalSeconds}秒`;
-      elements.timeGuidance.textContent = "換算結果を表示しています";
+      elements.timeGuidance.textContent = "換算結果画面を表示しています";
     } else {
       const remaining = TIME_DIGITS - state.rawTimeInput.length;
       elements.timePreviewNormalized.textContent = "入力待ち";
       elements.timePreviewSeconds.textContent = "";
-      elements.timeGuidance.textContent = `あと${remaining}桁入力してください (例: 0130)`;
+      elements.timeGuidance.textContent = `あと${remaining}桁入力してください。4桁揃うと結果画面へ移動します。`;
     }
   }
 
-  function renderResultSection(result?: {
-    targetSeconds: number;
-    sourcePreview: { minutes: number; seconds: number; totalSeconds: number };
-  }): void {
-    if (!result) {
+  function renderResultSection(result?: CalculationResult): void {
+    if (result) {
+      state.lastResult = result;
+    }
+    const data = result ?? state.lastResult;
+    if (!data) {
       elements.resultDisplay.textContent = "結果待ち";
       elements.resultSeconds.textContent = "";
       return;
     }
-    const minutes = Math.floor(result.targetSeconds / 60);
-    const seconds = result.targetSeconds % 60;
+    const minutes = Math.floor(data.targetSeconds / 60);
+    const seconds = data.targetSeconds % 60;
     const formattedTarget = formatClock(minutes, seconds);
     elements.resultDisplay.textContent = `目安: ${formattedTarget}`;
-    elements.resultSeconds.textContent = `合計 ${result.targetSeconds}秒 (${formatClock(
-      result.sourcePreview.minutes,
-      result.sourcePreview.seconds
+    elements.resultSeconds.textContent = `合計 ${data.targetSeconds}秒 (${formatClock(
+      data.sourcePreview.minutes,
+      data.sourcePreview.seconds
     )} → ${formattedTarget})`;
   }
 
