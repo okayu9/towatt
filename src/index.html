@@ -35,72 +35,104 @@
       </section>
 
       <section id="calculation-view" data-view="calculation" class="view" hidden>
-        <header class="view__header">
-          <h1 class="view__title">電子レンジ加熱時間換算</h1>
-          <p class="view__lead">弁当に記載のワット数と時間を入力してください。</p>
-        </header>
+        <section id="source-step" class="calc-step" data-step="source">
+          <header class="calc-step__header">
+            <p class="calc-step__meta">対応ワット数 <span data-bind="target-power">---</span> W</p>
+            <h1 class="calc-step__title">弁当ラベルのワット数</h1>
+            <p class="calc-step__lead">プリセットから選ぶか、手動で入力してください。</p>
+          </header>
 
-        <section class="target-display">
-          <h2 class="section-title">対応ワット数</h2>
-          <p class="target-display__value"><span id="target-power-value">---</span> W</p>
-          <div class="bookmark" id="bookmark-url-container">
-            <span class="bookmark__label">ブックマーク用URL:</span>
-            <span class="bookmark__value" id="bookmark-url-value">?target=</span>
+          <section class="source-power">
+            <div class="preset-buttons" role="group" aria-label="プリセットワット数">
+              <button type="button" class="preset-button" data-power="1500">1500W</button>
+              <button type="button" class="preset-button" data-power="700">700W</button>
+              <button type="button" class="preset-button" data-power="600">600W</button>
+              <button type="button" class="preset-button" data-power="500">500W</button>
+            </div>
+            <label class="manual-input">
+              <span class="manual-input__label">その他のワット数</span>
+              <input
+                id="manual-source-input"
+                type="number"
+                inputmode="numeric"
+                min="100"
+                max="3000"
+                placeholder="例: 800"
+              />
+            </label>
+          </section>
+
+          <section class="bookmark" id="bookmark-url-container">
+            <span class="bookmark__label">ブックマーク用URL</span>
+            <span class="bookmark__value" data-bind="bookmark-url">?target=</span>
+          </section>
+
+          <div class="calc-step__actions">
+            <button type="button" id="source-next-button" class="calc-step__next" disabled>
+              加熱時間を入力
+            </button>
           </div>
         </section>
 
-        <section class="source-power">
-          <h2 class="section-title">弁当ラベルのワット数</h2>
-          <div class="preset-buttons" role="group" aria-label="プリセットワット数">
-            <button type="button" class="preset-button" data-power="1500">1500W</button>
-            <button type="button" class="preset-button" data-power="700">700W</button>
-            <button type="button" class="preset-button" data-power="600">600W</button>
-            <button type="button" class="preset-button" data-power="500">500W</button>
-          </div>
-          <label class="manual-input">
-            <span class="manual-input__label">その他のワット数</span>
-            <input
-              id="manual-source-input"
-              type="number"
-              inputmode="numeric"
-              min="100"
-              max="3000"
-              placeholder="例: 800"
-            />
-          </label>
-        </section>
+        <section id="time-step" class="calc-step" data-step="time" hidden>
+          <header class="calc-step__header">
+            <p class="calc-step__meta">
+              対応 <span data-bind="target-power">---</span> W ／ ラベル <span data-bind="source-power">---</span> W
+            </p>
+            <h1 class="calc-step__title">加熱時間</h1>
+            <p class="calc-step__lead">4桁の分秒（例: 0130）を入力してください。</p>
+          </header>
 
-        <section class="time-input">
-          <h2 class="section-title">加熱時間</h2>
-          <div class="time-input__display" aria-live="polite">
-            <span id="time-display">00:00</span>
-          </div>
-          <p class="time-input__guidance" id="time-guidance">4桁の分秒（例: 0130）を入力してください。</p>
-          <div class="keypad" role="group" aria-label="時間入力">
-            <button type="button" class="keypad__key" data-key="1">1</button>
-            <button type="button" class="keypad__key" data-key="2">2</button>
-            <button type="button" class="keypad__key" data-key="3">3</button>
-            <button type="button" class="keypad__key" data-key="4">4</button>
-            <button type="button" class="keypad__key" data-key="5">5</button>
-            <button type="button" class="keypad__key" data-key="6">6</button>
-            <button type="button" class="keypad__key" data-key="7">7</button>
-            <button type="button" class="keypad__key" data-key="8">8</button>
-            <button type="button" class="keypad__key" data-key="9">9</button>
-            <button type="button" class="keypad__key" data-key="clear">クリア</button>
-            <button type="button" class="keypad__key" data-key="0">0</button>
-            <button type="button" class="keypad__key" data-key="back">⌫</button>
-          </div>
-          <div class="time-preview">
-            <span id="time-preview-normalized">入力待ち</span>
-            <span id="time-preview-seconds" class="time-preview__seconds"></span>
+          <section class="time-input">
+            <div class="time-input__display" aria-live="polite">
+              <span id="time-display">00:00</span>
+            </div>
+            <p class="time-input__guidance" id="time-guidance">4桁の分秒（例: 0130）を入力してください。</p>
+            <div class="keypad" role="group" aria-label="時間入力">
+              <button type="button" class="keypad__key" data-key="1">1</button>
+              <button type="button" class="keypad__key" data-key="2">2</button>
+              <button type="button" class="keypad__key" data-key="3">3</button>
+              <button type="button" class="keypad__key" data-key="4">4</button>
+              <button type="button" class="keypad__key" data-key="5">5</button>
+              <button type="button" class="keypad__key" data-key="6">6</button>
+              <button type="button" class="keypad__key" data-key="7">7</button>
+              <button type="button" class="keypad__key" data-key="8">8</button>
+              <button type="button" class="keypad__key" data-key="9">9</button>
+              <button type="button" class="keypad__key" data-key="clear">クリア</button>
+              <button type="button" class="keypad__key" data-key="0">0</button>
+              <button type="button" class="keypad__key" data-key="back">⌫</button>
+            </div>
+            <div class="time-preview">
+              <span id="time-preview-normalized">入力待ち</span>
+              <span id="time-preview-seconds" class="time-preview__seconds"></span>
+            </div>
+          </section>
+
+          <div class="calc-step__actions calc-step__actions--split">
+            <button type="button" id="time-back-button" class="calc-step__secondary">ワット数を修正</button>
+            <button type="button" id="time-clear-button" class="calc-step__ghost">入力をクリア</button>
           </div>
         </section>
 
-        <section class="result" aria-live="polite" id="result-section">
-          <h2 class="section-title">換算結果</h2>
-          <p class="result__summary" id="result-display">結果待ち</p>
-          <p class="result__seconds" id="result-seconds"></p>
-          <p class="result__note">※換算結果は目安です。食材の状態に応じて調整してください。</p>
+        <section id="result-step" class="calc-step" data-step="result" hidden>
+          <header class="calc-step__header">
+            <p class="calc-step__meta">
+              対応 <span data-bind="target-power">---</span> W ／ ラベル <span data-bind="source-power">---</span> W
+            </p>
+            <h1 class="calc-step__title">換算結果</h1>
+            <p class="calc-step__lead">目安の加熱時間をご確認ください。</p>
+          </header>
+
+          <section class="result" aria-live="polite" id="result-section">
+            <p class="result__summary" id="result-display">結果待ち</p>
+            <p class="result__seconds" id="result-seconds"></p>
+            <p class="result__note">※換算結果は目安です。食材の状態に応じて調整してください。</p>
+          </section>
+
+          <div class="calc-step__actions calc-step__actions--split">
+            <button type="button" id="result-edit-time" class="calc-step__secondary">時間を再入力</button>
+            <button type="button" id="result-edit-source" class="calc-step__ghost">ワット数を再選択</button>
+          </div>
         </section>
       </section>
 
