@@ -20,7 +20,6 @@
     rawTimeInput: string;
     viewMode: ViewMode;
     sourceSelection: SourceSelection;
-    bookmarkTimer: number | null;
     errorTimer: number | null;
     calculationStep: CalculationStep;
     lastResult: CalculationResult | null;
@@ -32,7 +31,6 @@
     rawTimeInput: "",
     viewMode: "setup",
     sourceSelection: null,
-    bookmarkTimer: null,
     errorTimer: null,
     calculationStep: "source",
     lastResult: null,
@@ -47,12 +45,8 @@
     calculationView: document.getElementById("calculation-view") as HTMLElement,
     setupForm: document.getElementById("setup-form") as HTMLFormElement,
     setupTargetInput: document.getElementById("setup-target-input") as HTMLInputElement,
-    bookmarkToast: document.getElementById("bookmark-toast") as HTMLElement,
     targetPowerValues: Array.from(
       document.querySelectorAll<HTMLElement>("[data-bind='target-power']")
-    ),
-    bookmarkUrlValues: Array.from(
-      document.querySelectorAll<HTMLElement>("[data-bind='bookmark-url']")
     ),
     sourcePowerIndicators: Array.from(
       document.querySelectorAll<HTMLElement>("[data-bind='source-power']")
@@ -60,14 +54,9 @@
     sourceStep: document.getElementById("source-step") as HTMLElement,
     timeStep: document.getElementById("time-step") as HTMLElement,
     resultStep: document.getElementById("result-step") as HTMLElement,
-    sourceNextButton: document.getElementById("source-next-button") as HTMLButtonElement,
-    timeBackButton: document.getElementById("time-back-button") as HTMLButtonElement,
-    timeClearButton: document.getElementById("time-clear-button") as HTMLButtonElement,
-    resultEditTimeButton: document.getElementById("result-edit-time") as HTMLButtonElement,
     resultEditSourceButton: document.getElementById("result-edit-source") as HTMLButtonElement,
     manualSourceInput: document.getElementById("manual-source-input") as HTMLInputElement,
     timeDisplay: document.getElementById("time-display") as HTMLElement,
-    timeGuidance: document.getElementById("time-guidance") as HTMLElement,
     timePreviewNormalized: document.getElementById("time-preview-normalized") as HTMLElement,
     timePreviewSeconds: document.getElementById("time-preview-seconds") as HTMLElement,
     keypad: document.querySelector(".keypad") as HTMLElement,
@@ -75,6 +64,9 @@
     resultSeconds: document.getElementById("result-seconds") as HTMLElement,
     resultSection: document.getElementById("result-section") as HTMLElement,
     errorBanner: document.getElementById("error-banner") as HTMLElement,
+    timeDigits: Array.from(
+      document.querySelectorAll<HTMLElement>(".time-digit")
+    ),
   } as const;
 
   function init(): void {
@@ -124,12 +116,10 @@
       });
     });
     elements.manualSourceInput.addEventListener("input", handleManualSourceInput);
+    elements.manualSourceInput.addEventListener("blur", handleManualSourceCommit);
+    elements.manualSourceInput.addEventListener("keydown", handleManualSourceKeydown);
     elements.keypad.addEventListener("click", handleKeypadClick);
-    elements.sourceNextButton.addEventListener("click", handleSourceNext);
-    elements.timeBackButton.addEventListener("click", () => goToStep("source"));
-    elements.timeClearButton.addEventListener("click", handleTimeClear);
-    elements.resultEditTimeButton.addEventListener("click", handleResultEditTime);
-    elements.resultEditSourceButton.addEventListener("click", () => goToStep("source"));
+    elements.resultEditSourceButton.addEventListener("click", resetToSourceSelection);
   }
 
   function handleSetupSubmit(event: Event): void {
@@ -148,7 +138,6 @@
     state.lastResult = null;
     updateTargetUrl(value);
     renderAll();
-    showBookmarkNotice();
   }
 
   function updateTargetUrl(value: number): void {
@@ -163,7 +152,12 @@
     }
   }
 
-  function setSourcePower(power: number | null): void {
+  interface SetSourcePowerOptions {
+    autoAdvance?: boolean;
+  }
+
+  function setSourcePower(power: number | null, options: SetSourcePowerOptions = {}): void {
+    const { autoAdvance = true } = options;
     const previous = state.sourcePower;
     state.sourcePower = power;
     renderSourcePowerSection();
@@ -177,7 +171,22 @@
       return;
     }
 
-    if (state.rawTimeInput.length === TIME_DIGITS || previous !== power) {
+    const hasChanged = previous !== power;
+
+    if (hasChanged) {
+      clearRawInput();
+    }
+
+    if (!autoAdvance) {
+      return;
+    }
+
+    if (state.calculationStep !== "time") {
+      goToStep("time");
+      return;
+    }
+
+    if (!hasChanged && state.rawTimeInput.length === TIME_DIGITS) {
       attemptCalculation();
     }
   }
@@ -188,18 +197,46 @@
     state.sourceSelection = trimmed === "" ? null : "manual";
 
     if (trimmed === "") {
-      setSourcePower(null);
+      setSourcePower(null, { autoAdvance: false });
       return;
     }
 
     const value = Number(trimmed);
-    if (!isValidPower(value)) {
-      setSourcePower(null);
-      showError("ワット数は100〜3000の範囲で指定してください");
+    if (!Number.isFinite(value)) {
       return;
     }
 
+    if (!isValidPower(value)) {
+      return;
+    }
+
+    setSourcePower(value, { autoAdvance: false });
+  }
+
+  function handleManualSourceCommit(): void {
+    const trimmed = elements.manualSourceInput.value.trim();
+    if (trimmed === "") {
+      setSourcePower(null);
+      return;
+    }
+    const value = Number(trimmed);
+    if (!isValidPower(value)) {
+      showError("ワット数は100〜3000の範囲で指定してください");
+      window.setTimeout(() => {
+        elements.manualSourceInput.focus();
+        elements.manualSourceInput.select();
+      }, 0);
+      return;
+    }
+    state.sourceSelection = "manual";
     setSourcePower(value);
+  }
+
+  function handleManualSourceKeydown(event: KeyboardEvent): void {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleManualSourceCommit();
+    }
   }
 
   function handleKeypadClick(event: MouseEvent): void {
@@ -258,19 +295,10 @@
     }
   }
 
-  function handleSourceNext(): void {
-    if (state.sourcePower === null) {
-      showError("弁当ラベルのワット数を選択してください");
-      return;
-    }
-    goToStep("time");
-  }
-
-  function handleTimeClear(): void {
-    clearRawInput();
-  }
-
-  function handleResultEditTime(): void {
+  function resetToSourceSelection(): void {
+    state.sourceSelection = null;
+    elements.manualSourceInput.value = "";
+    setSourcePower(null);
     clearRawInput();
   }
 
@@ -357,17 +385,11 @@
       elements.targetPowerValues.forEach((element) => {
         element.textContent = "---";
       });
-      elements.bookmarkUrlValues.forEach((element) => {
-        element.textContent = `?${TARGET_PARAM}=`;
-      });
       return;
     }
     const targetText = String(state.targetPower);
     elements.targetPowerValues.forEach((element) => {
       element.textContent = targetText;
-    });
-    elements.bookmarkUrlValues.forEach((element) => {
-      element.textContent = `?${TARGET_PARAM}=${targetText}`;
     });
   }
 
@@ -392,14 +414,26 @@
     elements.sourcePowerIndicators.forEach((element) => {
       element.textContent = powerLabel;
     });
-    elements.sourceNextButton.disabled = state.sourcePower === null;
   }
 
   function renderTimeSection(): void {
-    const padded = state.rawTimeInput.padStart(TIME_DIGITS, "0");
-    const minutesPart = padded.slice(0, 2);
-    const secondsPart = padded.slice(2, 4);
-    elements.timeDisplay.textContent = `${minutesPart}:${secondsPart}`;
+    const activeIndex = state.rawTimeInput.length < TIME_DIGITS ? state.rawTimeInput.length : -1;
+    elements.timeDigits.forEach((digitElement, index) => {
+      const filledChar = state.rawTimeInput.charAt(index);
+      const isFilled = filledChar !== "";
+      const isActive = index === activeIndex;
+      let displayChar: string;
+      if (isFilled) {
+        displayChar = filledChar;
+      } else if (isActive) {
+        displayChar = "_";
+      } else {
+        displayChar = "\u00A0";
+      }
+      digitElement.textContent = displayChar;
+      digitElement.classList.toggle("is-active", isActive);
+      digitElement.classList.toggle("is-empty", !isFilled);
+    });
 
     if (state.rawTimeInput.length === TIME_DIGITS) {
       const preview = parseRawTime(state.rawTimeInput);
@@ -407,12 +441,9 @@
         .toString()
         .padStart(2, "0")}秒`;
       elements.timePreviewSeconds.textContent = `合計 ${preview.totalSeconds}秒`;
-      elements.timeGuidance.textContent = "換算結果画面を表示しています";
     } else {
-      const remaining = TIME_DIGITS - state.rawTimeInput.length;
       elements.timePreviewNormalized.textContent = "入力待ち";
       elements.timePreviewSeconds.textContent = "";
-      elements.timeGuidance.textContent = `あと${remaining}桁入力してください。4桁揃うと結果画面へ移動します。`;
     }
   }
 
@@ -429,11 +460,8 @@
     const minutes = Math.floor(data.targetSeconds / 60);
     const seconds = data.targetSeconds % 60;
     const formattedTarget = formatClock(minutes, seconds);
-    elements.resultDisplay.textContent = `目安: ${formattedTarget}`;
-    elements.resultSeconds.textContent = `合計 ${data.targetSeconds}秒 (${formatClock(
-      data.sourcePreview.minutes,
-      data.sourcePreview.seconds
-    )} → ${formattedTarget})`;
+    elements.resultDisplay.textContent = formattedTarget;
+    elements.resultSeconds.textContent = "";
   }
 
   function formatClock(minutes: number, seconds: number): string {
@@ -449,17 +477,6 @@
     state.errorTimer = window.setTimeout(() => {
       elements.errorBanner.hidden = true;
       state.errorTimer = null;
-    }, NOTICE_DURATION_MS);
-  }
-
-  function showBookmarkNotice(): void {
-    if (state.bookmarkTimer !== null) {
-      window.clearTimeout(state.bookmarkTimer);
-    }
-    elements.bookmarkToast.hidden = false;
-    state.bookmarkTimer = window.setTimeout(() => {
-      elements.bookmarkToast.hidden = true;
-      state.bookmarkTimer = null;
     }, NOTICE_DURATION_MS);
   }
 
