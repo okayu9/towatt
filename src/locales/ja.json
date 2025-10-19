@@ -7,7 +7,7 @@
   "badges.targetPowerLong": "対応ワット数",
   "badges.targetPowerShort": "対応",
   "badges.labelPower": "ラベル",
-  "source.title": "弁当ラベルのワット数",
+  "source.title": "ラベルに記載されたワット数",
   "source.manualLabel": "その他のワット数",
   "source.manualPlaceholder": "例: 800",
   "source.presetAria": "プリセットワット数",
