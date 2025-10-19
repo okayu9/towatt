@@ -1,5 +1,5 @@
-import { resolve } from "path";
-import { inlineHtmlAsset } from "./lib/html-inline.mjs";
+import { resolve } from "node:path";
+import { inlineHtmlAsset } from "./lib/html-inline.js";
 
 const BUILD_HTML = resolve("build/index.html");
 const BUILD_JS = resolve("build/main.js");
@@ -12,7 +12,7 @@ const GA_SNIPPET_WITH_COMMENTS_PATTERN =
 const GA_SNIPPET_PATTERN =
   /<script\s+async\s+src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=__GA_MEASUREMENT_ID__"\s*><\/script>\s*<script>[\s\S]*?__GA_MEASUREMENT_ID__[\s\S]*?<\/script>/i;
 
-function injectGaMeasurementId(html) {
+function injectGaMeasurementId(html: string): string {
   const gaMeasurementId = process.env.GA_MEASUREMENT_ID?.trim();
 
   if (!gaMeasurementId) {
@@ -24,11 +24,11 @@ function injectGaMeasurementId(html) {
   return html.replace(GA_PLACEHOLDER_PATTERN, gaMeasurementId);
 }
 
-function sanitizeJs(js) {
+function sanitizeJs(js: string): string {
   return js.replace(/\/\/#[^\n]*$/gm, "").trim();
 }
 
-async function bundleHtml() {
+async function bundleHtml(): Promise<void> {
   await inlineHtmlAsset({
     sourceHtmlPath: BUILD_HTML,
     assetPath: BUILD_JS,
