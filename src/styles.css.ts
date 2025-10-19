@@ -535,10 +535,14 @@ globalStyle('.result', {
 
 globalStyle('.result__summary', {
   margin: '0 0 10px',
-  fontSize: 'clamp(34px, 8vw, 48px)',
+  fontSize: 'clamp(56px, 15vw, 180px)',
   fontWeight: 700,
-  letterSpacing: '0.02em',
+  lineHeight: 0.95,
   textAlign: 'center',
+  width: '100%',
+  whiteSpace: 'nowrap',
+  letterSpacing: '0.02em',
+  fontVariantNumeric: 'tabular-nums',
 });
 
 globalStyle('.result__seconds', {
