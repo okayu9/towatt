@@ -10,6 +10,15 @@ async function writeText(filePath, contents) {
   await writeFile(filePath, contents, "utf8");
 }
 
+function minifyHtml(html) {
+  return html
+    .replace(/<!--(?!\s*\[if).*?-->/gs, "")
+    .replace(/\s+/g, " ")
+    .replace(/>\s+</g, "><")
+    .replace(/\s+(\/?>)/g, "$1")
+    .trim();
+}
+
 export async function inlineHtmlAsset({
   sourceHtmlPath,
   assetPath,
@@ -29,7 +38,11 @@ export async function inlineHtmlAsset({
     throw new Error("Inline replacement did not modify the HTML content.");
   }
 
-  await Promise.all(outputHtmlPaths.map((filePath) => writeText(filePath, updatedHtml)));
+  const minifiedHtml = minifyHtml(updatedHtml);
 
-  return updatedHtml;
+  await Promise.all(
+    outputHtmlPaths.map((filePath) => writeText(filePath, minifiedHtml)),
+  );
+
+  return minifiedHtml;
 }
