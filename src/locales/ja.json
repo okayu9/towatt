@@ -35,6 +35,6 @@
   "privacy.section.purpose": "利用目的",
   "privacy.section.purpose.body": "収集したデータは、機能改善・サービス品質向上のための分析にのみ使用し、第三者への無断提供は行いません。",
   "privacy.section.analytics": "Google アナリティクスについて",
-  "privacy.section.analytics.body": "詳細は <a href=\\\"https://marketingplatform.google.com/about/analytics/terms/jp/\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\" class=\\\"privacy-modal__link\\\">Google アナリティクス利用規約</a> および <a href=\\\"https://policies.google.com/privacy?hl=ja\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\" class=\\\"privacy-modal__link\\\">Google プライバシーポリシー</a> をご参照ください。",
-  "privacy.section.optout.body": "Google アナリティクスによるデータ収集を無効にするには、ブラウザ向けの <a href=\\\"https://tools.google.com/dlpage/gaoptout?hl=ja\\\" target=\\\"_blank\\\" rel=\\\"noopener noreferrer\\\" class=\\\"privacy-modal__link\\\">オプトアウトアドオン</a> をご利用いただけます。"
+  "privacy.section.analytics.body": "詳細は <a href=\"https://marketingplatform.google.com/about/analytics/terms/jp/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"privacy-modal__link\">Google アナリティクス利用規約</a> および <a href=\"https://policies.google.com/privacy?hl=ja\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"privacy-modal__link\">Google プライバシーポリシー</a> をご参照ください。",
+  "privacy.section.optout.body": "Google アナリティクスによるデータ収集を無効にするには、ブラウザ向けの <a href=\"https://tools.google.com/dlpage/gaoptout?hl=ja\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"privacy-modal__link\">オプトアウトアドオン</a> をご利用いただけます。"
 }
