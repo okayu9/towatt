@@ -1,5 +1,5 @@
-import { resolve } from "path";
-import { inlineHtmlAsset } from "./lib/html-inline.mjs";
+import { resolve } from "node:path";
+import { inlineHtmlAsset } from "./lib/html-inline.js";
 
 const SOURCE_HTML = resolve("src/index.html");
 const BUILD_CSS = resolve("build/main.css");
@@ -7,14 +7,14 @@ const TARGET_HTML = resolve("build/index.html");
 
 const CSS_LINK_PATTERN = /<link\s+rel="stylesheet"\s+href="\.\/main\.css"\s*\/?>(\r?\n)?/i;
 
-function minifyCss(css) {
+function minifyCss(css: string): string {
   return css
     .replace(/\/\*[\s\S]*?\*\//g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-async function inlineCss() {
+async function inlineCss(): Promise<void> {
   await inlineHtmlAsset({
     sourceHtmlPath: SOURCE_HTML,
     assetPath: BUILD_CSS,

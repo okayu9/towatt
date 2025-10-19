@@ -7,7 +7,7 @@ const DIST_DIR = resolve("dist");
 const HOST = process.env.HOST ?? "127.0.0.1";
 const PORT = Number.parseInt(process.env.PORT ?? "4173", 10);
 
-const MIME_TYPES = {
+const MIME_TYPES: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -20,7 +20,7 @@ const MIME_TYPES = {
   ".svg": "image/svg+xml; charset=utf-8",
 };
 
-function toDistPath(urlPath) {
+function toDistPath(urlPath: string): string {
   const safePath = urlPath.split("?")[0].split("#")[0];
   const normalized = safePath === "/" ? "/index.html" : safePath;
   const segments = normalized.split("/").filter(Boolean);

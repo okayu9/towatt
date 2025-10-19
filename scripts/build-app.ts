@@ -1,5 +1,5 @@
-import { mkdir } from 'fs/promises';
-import { resolve } from 'path';
+import { mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { build } from 'esbuild';
 import { vanillaExtractPlugin } from '@vanilla-extract/esbuild-plugin';
 
@@ -7,7 +7,7 @@ const ENTRY_FILE = resolve('src/main.ts');
 const OUT_DIR = resolve('build');
 const OUT_FILE = resolve(OUT_DIR, 'main.js');
 
-async function bundle() {
+async function bundle(): Promise<void> {
   await mkdir(OUT_DIR, { recursive: true });
 
   await build({
