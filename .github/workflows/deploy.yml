@@ -35,6 +35,8 @@ jobs:
         run: npm test
 
       - name: Build distributable
+        env:
+          GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
         run: npm run dist
 
       - name: Upload Pages artifact

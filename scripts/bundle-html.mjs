@@ -6,6 +6,23 @@ const BUILD_JS = resolve("build/main.js");
 const DIST_HTML = resolve("dist/index.html");
 
 const SCRIPT_TAG_PATTERN = /<script\s+src="\.\/main\.js"\s+defer><\/script>/i;
+const GA_PLACEHOLDER_PATTERN = /__GA_MEASUREMENT_ID__/g;
+const GA_SNIPPET_WITH_COMMENTS_PATTERN =
+  /<!--\s*GOOGLE_ANALYTICS_START\s*-->[\s\S]*?<!--\s*GOOGLE_ANALYTICS_END\s*-->/i;
+const GA_SNIPPET_PATTERN =
+  /<script\s+async\s+src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=__GA_MEASUREMENT_ID__"\s*><\/script>\s*<script>[\s\S]*?__GA_MEASUREMENT_ID__[\s\S]*?<\/script>/i;
+
+function injectGaMeasurementId(html) {
+  const gaMeasurementId = process.env.GA_MEASUREMENT_ID?.trim();
+
+  if (!gaMeasurementId) {
+    return html
+      .replace(GA_SNIPPET_WITH_COMMENTS_PATTERN, "")
+      .replace(GA_SNIPPET_PATTERN, "");
+  }
+
+  return html.replace(GA_PLACEHOLDER_PATTERN, gaMeasurementId);
+}
 
 function sanitizeJs(js) {
   return js.replace(/\/\/#[^\n]*$/gm, "").trim();
@@ -19,7 +36,8 @@ async function bundleHtml() {
     transformAsset: sanitizeJs,
     replace(html, inlineJs) {
       const inlineScript = `<script>${inlineJs}</script>`;
-      return html.replace(SCRIPT_TAG_PATTERN, inlineScript);
+      const inlinedHtml = html.replace(SCRIPT_TAG_PATTERN, inlineScript);
+      return injectGaMeasurementId(inlinedHtml);
     },
   });
 }
