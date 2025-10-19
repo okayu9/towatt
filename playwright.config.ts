@@ -4,6 +4,20 @@ const PORT = Number.parseInt(process.env.E2E_PORT ?? "4173", 10);
 const HOST = process.env.E2E_HOST ?? "127.0.0.1";
 const BASE_URL = `http://${HOST}:${PORT}`;
 
+const projects = [
+  {
+    name: "Chromium",
+    use: { ...devices["Desktop Chrome"] },
+  },
+];
+
+if (!process.env.CI) {
+  projects.push({
+    name: "Mobile Safari",
+    use: { ...devices["iPhone 13"] },
+  });
+}
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -16,16 +30,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: process.env.CI ? "retain-on-failure" : "off",
   },
-  projects: [
-    {
-      name: "Chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-    {
-      name: "Mobile Safari",
-      use: { ...devices["iPhone 13"] },
-    },
-  ],
+  projects,
   webServer: {
     command: `PORT=${PORT} HOST=${HOST} npm run e2e:webserver`,
     url: BASE_URL,
