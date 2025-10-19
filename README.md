@@ -25,7 +25,7 @@
 
 ## セットアップ
 ### 前提条件
-- Node.js 18 LTS 以降（ESM と esbuild の動作確認済みバージョンを推奨）
+- Node.js 22 LTS 以降（ESM と esbuild の動作確認済みバージョンを推奨）
 - npm (Node.js 同梱)
 
 ### インストール
