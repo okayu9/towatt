@@ -485,6 +485,7 @@ globalStyle('.keypad__key', {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
+  touchAction: 'manipulation',
   '@media': {
     'screen and (max-width: 640px)': {
       minHeight: '76px',
