@@ -535,12 +535,11 @@ globalStyle('.result', {
 
 globalStyle('.result__summary', {
   margin: '0 0 10px',
-  fontSize: 'clamp(56px, 15vw, 180px)',
+  fontSize: 'clamp(28px, 8vw, 180px)',
   fontWeight: 700,
-  lineHeight: 0.95,
+  lineHeight: 1.05,
   textAlign: 'center',
   width: '100%',
-  whiteSpace: 'nowrap',
   letterSpacing: '0.02em',
   fontVariantNumeric: 'tabular-nums',
 });
