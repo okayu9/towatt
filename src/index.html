@@ -4,6 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>電子レンジ加熱時間換算ツール</title>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-15P0WRS0D2"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-15P0WRS0D2");
+    </script>
     <link rel="stylesheet" href="./main.css" />
   </head>
   <body>
@@ -142,6 +156,95 @@
 
       <section id="error-banner" class="error-banner" role="alert" hidden></section>
     </main>
+    <footer class="app-footer">
+      <button type="button" id="privacy-open" class="app-footer__link">
+        プライバシーポリシー
+      </button>
+    </footer>
+    <section
+      id="privacy-modal"
+      class="privacy-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="privacy-modal-title"
+      aria-hidden="true"
+      hidden
+    >
+      <div class="privacy-modal__overlay" data-privacy-dismiss="overlay"></div>
+      <div class="privacy-modal__panel" role="document" tabindex="-1">
+        <header class="privacy-modal__header">
+          <h2 id="privacy-modal-title" class="privacy-modal__title">
+            プライバシーポリシー
+          </h2>
+          <button
+            type="button"
+            class="privacy-modal__close"
+            data-privacy-dismiss="close-button"
+            aria-label="閉じる"
+          >
+            閉じる
+          </button>
+        </header>
+        <div class="privacy-modal__body">
+          <p>
+            当サイトでは、利用状況を把握しサービス品質の向上に役立てるため、Google
+            アナリティクスを含む解析ツールを使用しています。収集されるデータには個人を特定できる情報は含まれず、Google
+            のポリシーに基づき管理されます。
+          </p>
+          <h3 class="privacy-modal__section-title">収集する情報</h3>
+          <p>
+            利用端末や操作内容など、アプリの利用状況を示すデータが記録されます。これにはページ遷移を伴わない操作イベントや、入力値の範囲といった統計的な情報が含まれる場合があります。
+          </p>
+          <h3 class="privacy-modal__section-title">利用目的</h3>
+          <p>
+            収集したデータは、機能改善・サービス品質向上のための分析にのみ使用し、第三者への無断提供は行いません。
+          </p>
+          <h3 class="privacy-modal__section-title">Google アナリティクスについて</h3>
+          <p>
+            詳細は
+            <a
+              href="https://marketingplatform.google.com/about/analytics/terms/jp/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="privacy-modal__link"
+            >
+              Google アナリティクス利用規約
+            </a>
+            および
+            <a
+              href="https://policies.google.com/privacy?hl=ja"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="privacy-modal__link"
+            >
+              Google プライバシーポリシー
+            </a>
+            をご参照ください。
+          </p>
+          <p>
+            Google アナリティクスによるデータ収集を無効にするには、ブラウザ向けの
+            <a
+              href="https://tools.google.com/dlpage/gaoptout?hl=ja"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="privacy-modal__link"
+            >
+              オプトアウトアドオン
+            </a>
+            をご利用いただけます。
+          </p>
+        </div>
+        <footer class="privacy-modal__footer">
+          <button
+            type="button"
+            class="privacy-modal__close"
+            data-privacy-dismiss="footer-button"
+          >
+            閉じる
+          </button>
+        </footer>
+      </div>
+    </section>
     <script src="./main.js" defer></script>
   </body>
 </html>
