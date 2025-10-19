@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>電子レンジ加熱時間換算ツール</title>
+    <title data-locale-key="document.title"></title>
     <!-- Google tag (gtag.js) -->
     <script
       async
@@ -25,10 +25,14 @@
       <section id="setup-view" data-view="setup" class="view">
         <div class="view__panel">
           <header class="view__header">
-            <h1 class="view__title">対応ワット数</h1>
+            <h1 class="view__title" data-locale-key="setup.title"></h1>
           </header>
           <form id="setup-form" class="setup-form">
-            <label class="setup-form__label" for="setup-target-input">ワット数</label>
+            <label
+              class="setup-form__label"
+              for="setup-target-input"
+              data-locale-key="setup.label"
+            ></label>
             <input
               id="setup-target-input"
               class="setup-form__input"
@@ -36,10 +40,14 @@
               inputmode="numeric"
               min="100"
               max="3000"
-              placeholder="例: 600"
+              data-locale-attr="placeholder:setup.placeholder"
               required
             />
-            <button type="submit" class="setup-form__submit">セット</button>
+            <button
+              type="submit"
+              class="setup-form__submit"
+              data-locale-key="setup.submit"
+            ></button>
           </form>
         </div>
       </section>
@@ -50,27 +58,31 @@
             <header class="calc-step__header">
               <p class="calc-step__meta">
                 <span class="calc-step__meta-badge">
-                  対応ワット数
+                  <span data-locale-key="badges.targetPowerLong"></span>
                   <span class="calc-step__meta-value" data-bind="target-power">---</span>
                   <span class="calc-step__meta-unit">W</span>
                 </span>
               </p>
-              <h1 class="calc-step__title">弁当ラベルのワット数</h1>
+              <h1 class="calc-step__title" data-locale-key="source.title"></h1>
             </header>
 
             <section class="source-power">
-              <div class="preset-buttons" role="group" aria-label="プリセットワット数">
-                <!-- JavaScriptでプリセットボタンを生成 -->
+              <div
+                class="preset-buttons"
+                role="group"
+                data-locale-attr="aria-label:source.presetAria"
+              >
+                <!-- Preset buttons are generated via JavaScript -->
               </div>
               <label class="manual-input">
-                <span class="manual-input__label">その他のワット数</span>
+                <span class="manual-input__label" data-locale-key="source.manualLabel"></span>
                 <input
                   id="manual-source-input"
                   type="number"
                   inputmode="numeric"
                   min="100"
                   max="3000"
-                  placeholder="例: 800"
+                  data-locale-attr="placeholder:source.manualPlaceholder"
                 />
               </label>
             </section>
@@ -80,17 +92,17 @@
             <header class="calc-step__header">
               <p class="calc-step__meta">
                 <span class="calc-step__meta-badge">
-                  対応
+                  <span data-locale-key="badges.targetPowerShort"></span>
                   <span class="calc-step__meta-value" data-bind="target-power">---</span>
                   <span class="calc-step__meta-unit">W</span>
                 </span>
                 <span class="calc-step__meta-badge">
-                  ラベル
+                  <span data-locale-key="badges.labelPower"></span>
                   <span class="calc-step__meta-value" data-bind="source-power">---</span>
                   <span class="calc-step__meta-unit">W</span>
                 </span>
               </p>
-              <h1 class="calc-step__title">加熱時間</h1>
+              <h1 class="calc-step__title" data-locale-key="time.title"></h1>
             </header>
 
             <section class="time-input">
@@ -103,7 +115,11 @@
                   <span class="time-digit" data-index="3">&nbsp;</span>
                 </span>
               </div>
-              <div class="keypad" role="group" aria-label="時間入力">
+              <div
+                class="keypad"
+                role="group"
+                data-locale-attr="aria-label:time.keypadAria"
+              >
                 <button type="button" class="keypad__key" data-key="7">7</button>
                 <button type="button" class="keypad__key" data-key="8">8</button>
                 <button type="button" class="keypad__key" data-key="9">9</button>
@@ -113,12 +129,20 @@
                 <button type="button" class="keypad__key" data-key="1">1</button>
                 <button type="button" class="keypad__key" data-key="2">2</button>
                 <button type="button" class="keypad__key" data-key="3">3</button>
-                <button type="button" class="keypad__key" data-key="clear">クリア</button>
+                <button
+                  type="button"
+                  class="keypad__key"
+                  data-key="clear"
+                  data-locale-key="keypad.clear"
+                ></button>
                 <button type="button" class="keypad__key keypad__key--zero" data-key="0">0</button>
                 <button type="button" class="keypad__key" data-key="back">⌫</button>
               </div>
               <div class="time-preview">
-                <span id="time-preview-normalized">入力待ち</span>
+                <span
+                  id="time-preview-normalized"
+                  data-locale-key="time.preview.waiting"
+                ></span>
                 <span id="time-preview-seconds" class="time-preview__seconds"></span>
               </div>
             </section>
@@ -128,27 +152,36 @@
             <header class="calc-step__header">
               <p class="calc-step__meta">
                 <span class="calc-step__meta-badge">
-                  対応
+                  <span data-locale-key="badges.targetPowerShort"></span>
                   <span class="calc-step__meta-value" data-bind="target-power">---</span>
                   <span class="calc-step__meta-unit">W</span>
                 </span>
                 <span class="calc-step__meta-badge">
-                  ラベル
+                  <span data-locale-key="badges.labelPower"></span>
                   <span class="calc-step__meta-value" data-bind="source-power">---</span>
                   <span class="calc-step__meta-unit">W</span>
                 </span>
               </p>
-              <h1 class="calc-step__title">換算結果</h1>
+              <h1 class="calc-step__title" data-locale-key="result.title"></h1>
             </header>
 
             <section class="result" aria-live="polite" id="result-section">
-              <p class="result__summary" id="result-display">結果待ち</p>
+              <p
+                class="result__summary"
+                id="result-display"
+                data-locale-key="result.pending"
+              ></p>
               <p class="result__seconds" id="result-seconds"></p>
-              <p class="result__note">※換算結果は目安です。食材の状態に応じて調整してください。</p>
+              <p class="result__note" data-locale-key="result.note"></p>
             </section>
 
             <div class="calc-step__actions">
-              <button type="button" id="result-edit-source" class="calc-step__secondary">ワット数を再選択</button>
+              <button
+                type="button"
+                id="result-edit-source"
+                class="calc-step__secondary"
+                data-locale-key="result.editSource"
+              ></button>
             </div>
           </section>
         </div>
@@ -157,9 +190,12 @@
       <section id="error-banner" class="error-banner" role="alert" hidden></section>
     </main>
     <footer class="app-footer">
-      <button type="button" id="privacy-open" class="app-footer__link">
-        プライバシーポリシー
-      </button>
+      <button
+        type="button"
+        id="privacy-open"
+        class="app-footer__link"
+        data-locale-key="privacy.open"
+      ></button>
     </footer>
     <section
       id="privacy-modal"
@@ -173,75 +209,36 @@
       <div class="privacy-modal__overlay" data-privacy-dismiss="overlay"></div>
       <div class="privacy-modal__panel" role="document" tabindex="-1">
         <header class="privacy-modal__header">
-          <h2 id="privacy-modal-title" class="privacy-modal__title">
-            プライバシーポリシー
-          </h2>
+          <h2
+            id="privacy-modal-title"
+            class="privacy-modal__title"
+            data-locale-key="privacy.title"
+          ></h2>
           <button
             type="button"
             class="privacy-modal__close"
             data-privacy-dismiss="close-button"
-            aria-label="閉じる"
-          >
-            閉じる
-          </button>
+            data-locale-attr="aria-label:privacy.closeLabel"
+            data-locale-key="privacy.closeButton"
+          ></button>
         </header>
         <div class="privacy-modal__body">
-          <p>
-            当サイトでは、利用状況を把握しサービス品質の向上に役立てるため、Google
-            アナリティクスを含む解析ツールを使用しています。収集されるデータには個人を特定できる情報は含まれず、Google
-            のポリシーに基づき管理されます。
-          </p>
-          <h3 class="privacy-modal__section-title">収集する情報</h3>
-          <p>
-            利用端末や操作内容など、アプリの利用状況を示すデータが記録されます。これにはページ遷移を伴わない操作イベントや、入力値の範囲といった統計的な情報が含まれる場合があります。
-          </p>
-          <h3 class="privacy-modal__section-title">利用目的</h3>
-          <p>
-            収集したデータは、機能改善・サービス品質向上のための分析にのみ使用し、第三者への無断提供は行いません。
-          </p>
-          <h3 class="privacy-modal__section-title">Google アナリティクスについて</h3>
-          <p>
-            詳細は
-            <a
-              href="https://marketingplatform.google.com/about/analytics/terms/jp/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="privacy-modal__link"
-            >
-              Google アナリティクス利用規約
-            </a>
-            および
-            <a
-              href="https://policies.google.com/privacy?hl=ja"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="privacy-modal__link"
-            >
-              Google プライバシーポリシー
-            </a>
-            をご参照ください。
-          </p>
-          <p>
-            Google アナリティクスによるデータ収集を無効にするには、ブラウザ向けの
-            <a
-              href="https://tools.google.com/dlpage/gaoptout?hl=ja"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="privacy-modal__link"
-            >
-              オプトアウトアドオン
-            </a>
-            をご利用いただけます。
-          </p>
+          <p data-locale-key="privacy.body"></p>
+          <h3 class="privacy-modal__section-title" data-locale-key="privacy.section.collect"></h3>
+          <p data-locale-key="privacy.section.collect.body"></p>
+          <h3 class="privacy-modal__section-title" data-locale-key="privacy.section.purpose"></h3>
+          <p data-locale-key="privacy.section.purpose.body"></p>
+          <h3 class="privacy-modal__section-title" data-locale-key="privacy.section.analytics"></h3>
+          <p data-locale-key="privacy.section.analytics.body" data-locale-mode="html"></p>
+          <p data-locale-key="privacy.section.optout.body" data-locale-mode="html"></p>
         </div>
         <footer class="privacy-modal__footer">
           <button
             type="button"
             class="privacy-modal__close"
             data-privacy-dismiss="footer-button"
-          >
-            閉じる
-          </button>
+            data-locale-key="privacy.closeButton"
+          ></button>
         </footer>
       </div>
     </section>

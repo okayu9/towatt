@@ -16,15 +16,16 @@ import { createBannerNotifier } from "./notifications";
 import { parseTargetFromQuery, removeTargetParam, updateTargetParam } from "./routing";
 import type { AppStore } from "./state";
 import type { AppState } from "./types";
+import { translate, type LocaleDictionary } from "./i18n";
 
 interface ControllerDeps {
   store: AppStore;
   elements: AppElements;
   render: (state: AppState) => void;
+  locale: LocaleDictionary;
 }
 
-export function createAppController({ store, elements, render }: ControllerDeps) {
-  
+export function createAppController({ store, elements, render, locale }: ControllerDeps) {
   hydratePresetButtons(elements, PRESET_POWERS);
   store.subscribe(render);
 
@@ -42,10 +43,10 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     }
     trackCalculationIssue(issue);
     if (issue === "missing-input") {
-      showError("ワット数と時間を入力してください");
+      showError(translate(locale, "errors.missing"));
       return;
     }
-    showError("加熱時間は1秒以上で指定してください");
+    showError(translate(locale, "errors.nonPositive"));
   }
 
   function focusManualSourceInput(): void {
@@ -70,7 +71,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     const trimmed = elements.setupTargetInput.value.trim();
     const value = Number(trimmed);
     if (!isValidPower(value)) {
-      showError("ワット数は100〜3000の範囲で指定してください");
+      showError(translate(locale, "errors.invalidRange"));
       return;
     }
     actions.setTargetPower(value);
@@ -150,7 +151,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     const isWithinRange = isValidPower(numericValue);
     if (!isFiniteValue || !isWithinRange) {
       trackSourcePowerInvalid(isFiniteValue ? "out_of_range" : "non_numeric");
-      showError("ワット数は100〜3000の範囲で指定してください");
+      showError(translate(locale, "errors.invalidRange"));
       focusManualSourceInput();
       return;
     }

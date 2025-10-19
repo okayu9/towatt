@@ -4,6 +4,7 @@ import { NOTICE_DURATION_MS } from "../src/app/constants";
 import { createAppController } from "../src/app/controller";
 import { createAppStore, createInitialState } from "../src/app/state";
 import type { AppElements } from "../src/app/dom";
+import { getActiveLocale, translate } from "../src/app/i18n";
 
 vi.mock("../src/app/analytics", () => ({
   trackCalculationIssue: vi.fn(),
@@ -115,34 +116,37 @@ describe("createAppController", () => {
     document.body.innerHTML = "";
   });
 
-  it("無効なターゲット入力でエラーを表示する", () => {
+  it("shows an error when target input is invalid", () => {
     vi.useFakeTimers();
     const store = createAppStore(createInitialState());
     const elements = createElements();
     const render = vi.fn();
 
-    const controller = createAppController({ store, elements, render });
+    const locale = getActiveLocale();
+    const controller = createAppController({ store, elements, render, locale });
     controller.initialize();
 
     elements.setupTargetInput.value = "50";
     submitForm(elements.setupForm);
 
     expect(store.getState().targetPower).toBeNull();
-    expect(analytics.trackErrorShown).toHaveBeenCalledWith("ワット数は100〜3000の範囲で指定してください");
+    const invalidRange = translate(locale, "errors.invalidRange");
+    expect(analytics.trackErrorShown).toHaveBeenCalledWith(invalidRange);
     expect(elements.errorBanner.hidden).toBe(false);
-    expect(elements.errorBanner.textContent).toBe("ワット数は100〜3000の範囲で指定してください");
+    expect(elements.errorBanner.textContent).toBe(invalidRange);
 
     vi.advanceTimersByTime(NOTICE_DURATION_MS);
     expect(elements.errorBanner.hidden).toBe(true);
     vi.useRealTimers();
   });
 
-  it("フォーム送信から結果表示までの主要フローを扱う", () => {
+  it("handles the main flow from form submission to result display", () => {
     const store = createAppStore(createInitialState());
     const elements = createElements();
     const render = vi.fn();
+    const locale = getActiveLocale();
 
-    const controller = createAppController({ store, elements, render });
+    const controller = createAppController({ store, elements, render, locale });
     controller.initialize();
 
     expect(render).toHaveBeenCalledWith(store.getState());
