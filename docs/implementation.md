@@ -2,18 +2,19 @@
 
 ## 技術スタックおよびビルド
 - 静的HTMLファイル1枚の構成とし、生成済みのCSS/JavaScriptを直接埋め込む。
-- TypeScriptでフロントエンドロジックを実装し、`tsc` によって即時実行関数（IIFE）形式のJavaScriptを生成してHTMLへ組み込む。
-- 基本方針として標準のDOM/Web APIで実装するが、必要に応じてライブラリを追加採用してよい。
+- TypeScriptでフロントエンドロジックを実装し、esbuild + vanilla-extract プラグインでバンドル／CSS抽出を行ってIIFE形式のJavaScriptとCSSを生成する。
+- 基本方針として標準のDOM/Web APIで実装しつつ、スタイルは vanilla-extract により型安全に管理する。
 - ソース管理用に以下の構成を使用する。
   - `src/index.html`（テンプレートHTML。ビルド処理で加工する前提）
-  - `src/styles.css`（開発時のみ、ビルド時にHTMLへインライン化）
+  - `src/styles.css.ts`（vanilla-extract によるスタイル定義）
   - `src/main.ts`（主要ロジック）
   - `build/`（ビルド成果物一時配置。ビルド前に必ず削除してクリーン状態で生成する）
   - `dist/`（配布用最終成果物。`build/` で組み立てたHTMLをコピーする）
 
 ## 使用ライブラリ
 - TypeScript（`typescript` パッケージ）。バージョンは `5.5.x` を指定する。
-- 上記以外のライブラリは導入しない。本ドキュメントに明記されていないライブラリは使用しない。
+- esbuild（`esbuild` パッケージ）をビルドバンドラとして利用する。
+- vanilla-extract（`@vanilla-extract/css` および `@vanilla-extract/esbuild-plugin`）でスタイルを記述・抽出する。
 
 ## 画面構成
 ### 1. 対応ワット数設定画面
@@ -99,11 +100,12 @@
 - 時間入力ガード: 4桁未満では換算処理が走らず、ガイダンス表示が出ることを確認する。
 
 ## ビルドとデプロイ手順の例
-1. `src/main.ts` と `src/styles.css` を作成する。
+1. `src/main.ts` と `src/styles.css.ts` を作成し、スタイルは vanilla-extract で定義した上で `src/main.ts` からインポートする。
 2. `tsconfig.json` を追加し、`target` を `ES2017`、`module` を `ES2015` に設定する。
-3. `npm run build` を作成し、`tsc --project tsconfig.json` を実行して `build/main.js` を生成する。生成されたコードは `IIFE` 形式になるよう `src/main.ts` の末尾で `(() => { ... })();` を構成する。
-4. `npm run inline-css` を作成し、Node.jsスクリプトで `src/index.html` を `build/index.html` にコピーした上で `src/styles.css` を読み込み、改行とコメントを削除して `<style>` タグへインライン化する。スクリプトは `scripts/inline-css.mjs` として配置し、`fs.readFileSync` と `fs.writeFileSync` を使用して処理する。
-5. `npm run bundle-html` を作成し、`build/main.js` を読み込んで `<script>` に埋め込み、加工済みの `build/index.html` を上書きする。バンドル後に `dist/index.html` を作成し、配布用最終成果物として保管する。
+3. esbuild 用のスクリプト `scripts/build-app.mjs` を作成し、`@vanilla-extract/esbuild-plugin` を利用して `build/main.js`・`build/main.css` を生成する。バンドル形式は `iife` を指定する。
+4. `npm run build` は `rm -rf build dist` → esbuild スクリプト実行の順に構成し、IIFE JS と CSS を含む `build` ディレクトリを生成する。
+5. `npm run inline-css` では `build/main.css` を `<style>` タグとして `src/index.html` にインライン化した `build/index.html` を作る。
+6. `npm run bundle-html` で `build/index.html` に `build/main.js` をインライン化し、その結果を `dist/index.html` として書き出す。
 
 ## メンテナンス指針
 - プリセットワット数追加時はTypeScript側の定数とUIボタンの両方を更新。

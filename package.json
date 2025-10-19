@@ -4,8 +4,8 @@
   "description": "電子レンジ加熱時間換算ツール",
   "scripts": {
     "clean": "rm -rf build dist",
-    "build:ts": "tsc --project tsconfig.json",
-    "build": "npm run clean && npm run build:ts",
+    "build:bundle": "node scripts/build-app.mjs",
+    "build": "npm run clean && npm run build:bundle",
     "inline-css": "node scripts/inline-css.mjs",
     "bundle-html": "node scripts/bundle-html.mjs",
     "dist": "npm run build && npm run inline-css && npm run bundle-html"
@@ -13,6 +13,9 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "typescript": "5.5"
+    "typescript": "5.5",
+    "esbuild": "^0.21.5",
+    "@vanilla-extract/css": "^1.16.1",
+    "@vanilla-extract/esbuild-plugin": "^2.3.5"
   }
 }
