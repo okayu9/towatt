@@ -44,6 +44,15 @@ Open `dist/index.html` directly in a browser or serve it with a static file serv
 npx serve dist
 ```
 
+### Google Analytics
+- Set the `GA_MEASUREMENT_ID` environment variable before running `npm run bundle-html` or `npm run dist` to inject the Google Analytics tag.
+- When the variable is unset the build completes without embedding the analytics snippet, keeping the measurement ID out of the repository.
+- Example:
+  ```bash
+  GA_MEASUREMENT_ID=G-XXXXXXXXXX npm run dist
+  ```
+- On GitHub Actions, store the value in the `GA_MEASUREMENT_ID` repository secret so the deployment workflow can expose it only during the production build.
+
 ## Calculation Logic
 - Uses the energy equivalence formula `sourcePower * sourceTime = targetPower * targetTime`.
 - Accepts four-digit keypad input representing minutes and seconds, then normalizes to total seconds.
