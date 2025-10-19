@@ -575,3 +575,133 @@ globalStyle('.error-banner', {
 globalStyle('.error-banner[hidden]', {
   display: 'none',
 });
+
+globalStyle('.app-footer', {
+  width: '100%',
+  padding: '0 clamp(20px, 6vw, 96px) clamp(24px, 6vw, 48px)',
+  textAlign: 'center',
+});
+
+globalStyle('.app-footer__link', {
+  background: 'none',
+  border: 'none',
+  color: themeVars.color.subtleText,
+  fontSize: '14px',
+  cursor: 'pointer',
+  textDecoration: 'underline',
+  padding: '6px 12px',
+  borderRadius: themeVars.radius.pill,
+});
+
+globalStyle('.app-footer__link:focus-visible', {
+  outline: `3px solid ${themeVars.focus.outline}`,
+  outlineOffset: '2px',
+});
+
+globalStyle('body.privacy-modal-open', {
+  overflow: 'hidden',
+});
+
+globalStyle('.privacy-modal', {
+  position: 'fixed',
+  inset: 0,
+  zIndex: 1000,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 'clamp(20px, 5vw, 48px)',
+});
+
+globalStyle('.privacy-modal[hidden]', {
+  display: 'none',
+});
+
+globalStyle('.privacy-modal__overlay', {
+  position: 'absolute',
+  inset: 0,
+  background: 'rgba(20, 24, 45, 0.55)',
+  backdropFilter: 'blur(6px)',
+});
+
+globalStyle('.privacy-modal__panel', {
+  position: 'relative',
+  maxWidth: 'min(640px, 100%)',
+  width: '100%',
+  borderRadius: '24px',
+  background: themeVars.color.surface,
+  border: `1px solid ${themeVars.color.panelBorder}`,
+  boxShadow: '0 32px 80px rgba(12, 23, 64, 0.32)',
+  padding: 'clamp(24px, 5vw, 36px)',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+  outline: 'none',
+});
+
+globalStyle('.privacy-modal__header', {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  gap: '16px',
+});
+
+globalStyle('.privacy-modal__title', {
+  margin: 0,
+  fontSize: '22px',
+  fontWeight: 700,
+});
+
+globalStyle('.privacy-modal__close', {
+  alignSelf: 'flex-start',
+  border: 'none',
+  background: themeVars.color.primary,
+  color: '#ffffff',
+  borderRadius: themeVars.radius.pill,
+  padding: '6px 16px',
+  fontSize: '13px',
+  fontWeight: 600,
+  cursor: 'pointer',
+});
+
+globalStyle('.privacy-modal__close:hover', {
+  background: themeVars.color.primaryAlt,
+});
+
+globalStyle('.privacy-modal__close:focus-visible', {
+  outline: `3px solid ${themeVars.focus.outline}`,
+  outlineOffset: '2px',
+});
+
+globalStyle('.privacy-modal__body', {
+  display: 'grid',
+  gap: '16px',
+  fontSize: '15px',
+  color: themeVars.color.text,
+  lineHeight: 1.6,
+});
+
+globalStyle('.privacy-modal__body p', {
+  margin: 0,
+});
+
+globalStyle('.privacy-modal__section-title', {
+  margin: '12px 0 4px',
+  fontSize: '16px',
+  fontWeight: 700,
+  color: themeVars.color.subtleText,
+});
+
+globalStyle('.privacy-modal__link', {
+  color: themeVars.color.secondaryText,
+  textDecoration: 'underline',
+});
+
+globalStyle('.privacy-modal__link:focus-visible', {
+  outline: `3px solid ${themeVars.focus.outline}`,
+  outlineOffset: '2px',
+});
+
+globalStyle('.privacy-modal__footer', {
+  display: 'flex',
+  justifyContent: 'flex-end',
+});

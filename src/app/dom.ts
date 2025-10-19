@@ -19,6 +19,11 @@ export interface AppElements {
   resultSeconds: HTMLElement;
   errorBanner: HTMLElement;
   timeDigits: HTMLElement[];
+  privacyOpenButton: HTMLButtonElement;
+  privacyModal: HTMLElement;
+  privacyModalOverlay: HTMLElement;
+  privacyModalPanel: HTMLElement;
+  privacyDismissButtons: HTMLElement[];
 }
 
 function expectElement<T extends Element>(element: T | null, selector: string): T {
@@ -33,6 +38,11 @@ export function queryAppElements(): AppElements {
   const presetButtonsContainer = expectElement(
     document.querySelector<HTMLElement>(".preset-buttons"),
     ".preset-buttons",
+  );
+
+  const privacyModal = expectElement(
+    document.getElementById("privacy-modal"),
+    "#privacy-modal",
   );
 
   return {
@@ -83,6 +93,22 @@ export function queryAppElements(): AppElements {
     resultSeconds: expectElement(document.getElementById("result-seconds"), "#result-seconds"),
     errorBanner: expectElement(document.getElementById("error-banner"), "#error-banner"),
     timeDigits: Array.from(document.querySelectorAll<HTMLElement>(".time-digit")),
+    privacyOpenButton: expectElement(
+      document.getElementById("privacy-open") as HTMLButtonElement | null,
+      "#privacy-open",
+    ),
+    privacyModal,
+    privacyModalOverlay: expectElement(
+      privacyModal.querySelector<HTMLElement>(".privacy-modal__overlay"),
+      ".privacy-modal__overlay",
+    ),
+    privacyModalPanel: expectElement(
+      privacyModal.querySelector<HTMLElement>(".privacy-modal__panel"),
+      ".privacy-modal__panel",
+    ),
+    privacyDismissButtons: Array.from(
+      privacyModal.querySelectorAll<HTMLElement>("[data-privacy-dismiss]"),
+    ),
   };
 }
 

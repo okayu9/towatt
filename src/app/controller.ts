@@ -1,3 +1,13 @@
+import {
+  trackCalculationIssue,
+  trackCalculationReset,
+  trackErrorShown,
+  trackKeypadInteraction,
+  trackSourcePowerCleared,
+  trackSourcePowerInvalid,
+  trackSourcePowerSelected,
+  trackTargetPowerConfirmed,
+} from "./analytics";
 import { NOTICE_DURATION_MS, PRESET_POWERS } from "./constants";
 import { createStateActions, type CalculationIssue } from "./actions";
 import { AppElements, hydratePresetButtons } from "./dom";
@@ -22,6 +32,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
   const errorNotifier = createBannerNotifier(elements.errorBanner, NOTICE_DURATION_MS);
 
   function showError(message: string): void {
+    trackErrorShown(message);
     errorNotifier.show(message);
   }
 
@@ -29,6 +40,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     if (!issue) {
       return;
     }
+    trackCalculationIssue(issue);
     if (issue === "missing-input") {
       showError("ワット数と時間を入力してください");
       return;
@@ -47,6 +59,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     const initialTarget = parseTargetFromQuery();
     if (initialTarget !== null) {
       actions.initializeFromTarget(initialTarget);
+      trackTargetPowerConfirmed(initialTarget, "url-param");
       return;
     }
     removeTargetParam();
@@ -61,6 +74,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
       return;
     }
     actions.setTargetPower(value);
+    trackTargetPowerConfirmed(value, "form");
     updateTargetParam(value);
   }
 
@@ -72,6 +86,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     actions.setSourceSelection("preset");
     actions.setManualSourceDraft("");
     const result = actions.setSourcePower(power);
+    trackSourcePowerSelected("preset", power, result.hasChanged);
     handleCalculationIssue(result.issue);
   }
 
@@ -96,18 +111,21 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     if (trimmed === "") {
       actions.setSourceSelection(null);
       actions.setSourcePower(null, { autoAdvance: false });
+      trackSourcePowerCleared("manual-draft-empty");
       return;
     }
 
     const numericValue = Number(trimmed);
     if (!Number.isFinite(numericValue)) {
       actions.setSourceSelection("manual");
+      trackSourcePowerInvalid("non_numeric");
       return;
     }
 
     actions.setSourceSelection("manual");
 
     if (!isValidPower(numericValue)) {
+      trackSourcePowerInvalid("out_of_range");
       return;
     }
 
@@ -123,11 +141,15 @@ export function createAppController({ store, elements, render }: ControllerDeps)
       actions.setSourceSelection(null);
       actions.setSourcePower(null);
       actions.clearRawInput();
+      trackSourcePowerCleared("manual-commit-empty");
       return;
     }
 
     const numericValue = Number(trimmed);
-    if (!Number.isFinite(numericValue) || !isValidPower(numericValue)) {
+    const isFiniteValue = Number.isFinite(numericValue);
+    const isWithinRange = isValidPower(numericValue);
+    if (!isFiniteValue || !isWithinRange) {
+      trackSourcePowerInvalid(isFiniteValue ? "out_of_range" : "non_numeric");
       showError("ワット数は100〜3000の範囲で指定してください");
       focusManualSourceInput();
       return;
@@ -136,6 +158,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     actions.setManualSourceDraft(trimmed);
     actions.setSourceSelection("manual");
     const result = actions.setSourcePower(numericValue);
+    trackSourcePowerSelected("manual", numericValue, result.hasChanged);
     handleCalculationIssue(result.issue);
   }
 
@@ -156,14 +179,17 @@ export function createAppController({ store, elements, render }: ControllerDeps)
       return;
     }
     if (key === "clear") {
+      trackKeypadInteraction("clear", "all");
       actions.clearRawInput();
       return;
     }
     if (key === "back") {
+      trackKeypadInteraction("backspace", "single");
       actions.removeLastDigit();
       return;
     }
     if (/^\d$/.test(key)) {
+      trackKeypadInteraction("digit", key);
       const issue = actions.appendDigit(key);
       handleCalculationIssue(issue);
     }
@@ -180,6 +206,7 @@ export function createAppController({ store, elements, render }: ControllerDeps)
     elements.manualSourceInput.addEventListener("keydown", handleManualSourceKeydown);
     elements.keypad.addEventListener("click", handleKeypadClick);
     elements.resultEditSourceButton.addEventListener("click", () => {
+      trackCalculationReset("edit-source-button");
       actions.resetToSourceSelection();
     });
   }
