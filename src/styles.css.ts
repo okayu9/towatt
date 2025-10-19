@@ -536,10 +536,13 @@ globalStyle('.result', {
 
 globalStyle('.result__summary', {
   margin: '0 0 10px',
-  fontSize: 'clamp(34px, 8vw, 48px)',
+  fontSize: 'clamp(28px, 8vw, 180px)',
   fontWeight: 700,
-  letterSpacing: '0.02em',
+  lineHeight: 1.05,
   textAlign: 'center',
+  width: '100%',
+  letterSpacing: '0.02em',
+  fontVariantNumeric: 'tabular-nums',
 });
 
 globalStyle('.result__seconds', {
