@@ -14,7 +14,7 @@ describe("createStateActions", () => {
     actions = createStateActions(store);
   });
 
-  it("setTargetPower で換算モードに遷移し入力をリセットする", () => {
+  it("setTargetPower switches to calculation mode and resets inputs", () => {
     actions.setTargetPower(targetPower);
     const state = store.getState();
 
@@ -25,7 +25,7 @@ describe("createStateActions", () => {
     expect(state.sourcePower).toBeNull();
   });
 
-  it("setSourcePower でステップを time に進める", () => {
+  it("setSourcePower advances the step to time", () => {
     actions.setTargetPower(targetPower);
     actions.setSourcePower(sourcePower);
     const state = store.getState();
@@ -34,7 +34,7 @@ describe("createStateActions", () => {
     expect(state.calculationStep).toBe("time");
   });
 
-  it("appendDigit が4桁揃うと結果を計算する", () => {
+  it("appendDigit computes the result once four digits are entered", () => {
     actions.setTargetPower(targetPower);
     actions.setSourcePower(sourcePower);
 
@@ -51,7 +51,7 @@ describe("createStateActions", () => {
     expect(state.lastResult?.targetSeconds).toBe(628);
   });
 
-  it("必要な入力が揃っていなければ missing-input を返す", () => {
+  it("returns missing-input when required values are not ready", () => {
     actions.setTargetPower(targetPower);
     const issue = actions.appendDigit("0");
     expect(issue).toBeNull();
@@ -62,7 +62,7 @@ describe("createStateActions", () => {
     expect(store.getState().lastResult).toBeNull();
   });
 
-  it("clearRawInput で入力と結果をリセットしステップを戻す", () => {
+  it("clearRawInput resets input and result then steps back", () => {
     actions.setTargetPower(targetPower);
     actions.setSourcePower(sourcePower);
     "1234".split("").forEach((digit) => actions.appendDigit(digit));
@@ -75,7 +75,7 @@ describe("createStateActions", () => {
     expect(state.calculationStep).toBe("time");
   });
 
-  it("removeLastDigit で末尾を削除する", () => {
+  it("removeLastDigit removes the last digit", () => {
     actions.setTargetPower(targetPower);
     actions.setSourcePower(sourcePower);
     actions.appendDigit("1");

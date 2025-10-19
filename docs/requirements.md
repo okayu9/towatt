@@ -1,32 +1,32 @@
-# 電子レンジ加熱時間換算ツール ドキュメント
+# Microwave Heating Time Converter – Requirements
 
-## 概要
-- 電子レンジ出力の違いによる加熱時間を換算する、スマートフォン向け単一ページツール。
-- 弁当に記載されたワット数と時間から、指定された対応ワット数で必要な加熱時間を即時算出する。
-- クエリパラメータで対応ワット数を指定でき、ブックマーク経由で直接利用可能。
+## Overview
+- Single-page tool that converts microwave heating time between different wattages for quick reference on smartphones.
+- Accepts wattage and heating time from a food label, then converts to the user’s preferred target wattage.
+- Target wattage can be stored in the URL (for example, `?target=600`) so users can bookmark specific presets.
 
-## 利用シナリオ
-- 初回アクセスで対応ワット数が未指定の場合、設定ページで希望ワット数を入力し、ブックマーク用URLを提示する。
-- 対応ワット数付きURLからアクセスすると、弁当ラベルの情報入力のみで換算結果を得られる。
-- 複数の電子レンジを使い分ける家庭でも、それぞれのワット数URLを保存して切り替え可能。
+## Usage Scenarios
+- First visit without a target wattage prompts the user to set one and shows the bookmark-friendly URL.
+- Visiting with a `target` query parameter opens the conversion screen directly.
+- Households using multiple microwaves can keep separate bookmark URLs for each wattage.
 
-## 入力仕様
-- 弁当に記載されたワット数はプリセット（1500W / 700W / 600W / 500W）から選択し、一覧にない場合は手動で入力できる。
-- 手動入力は整数のみ受け付け、100〜3000の範囲で指定する（10刻みなどの制限は設けない）。
-- 加熱時間はページ内キーボードから4桁固定の数値を入力し、`0130` のように分秒へ変換する。
-- 4桁に満たない場合は換算を実行せず、入力促進のガイドを表示する。
-- 4桁が揃った時点で入力画面から換算結果画面へ自動遷移する。
-- キーボードは画面内に配置し、0〜9の数字ボタンに加えてクリアとバックスペースを備える。
-- 対応ワット数は小文字のキー名を持つクエリパラメータで1つのみ指定する。
-- 対応ワット数が指定されていない場合は設定画面を表示し、入力後にブックマーク用URL（例: `?target=600`）を提示する。
-- 設定完了後は同一ページ内で換算画面へ切り替え、同時にクエリ付きURLをアドレスバーへ反映する。
+## Input Rules
+- Label wattage selection offers presets (1500W / 700W / 600W / 500W) plus a manual numeric input.
+- Manual wattage input accepts integers between 100 and 3000 inclusive, without additional step constraints.
+- Heating time is entered via an on-screen keypad as a four-digit value (`0130` → 1 minute 30 seconds).
+- Conversion does not run until four digits are entered; guidance is shown while input is incomplete.
+- Once four digits are available, the UI transitions to the result view automatically.
+- Keypad contains digits 0–9 along with Clear and Backspace controls.
+- Only a single lowercase query parameter is used for the target wattage.
+- When the target wattage is absent or invalid, the setup view is displayed and invites the user to set it.
 
-## 出力仕様
-- 対応ワット数での必要加熱時間を分秒形式で表示し、必要に応じて秒単位の補足情報を示す。
-- 入力内容と計算結果を画面上部に大きく表示し、即時確認できるようにする。
-- ブックマーク推奨URLを明示し、ページ遷移直後に「このページをブックマークすると便利です」といった案内を一定時間表示する。
+## Output Rules
+- The converted heating time is displayed in minutes and seconds, with optional supplementary seconds text.
+- The top of the screen highlights both the input values and the conversion result for quick confirmation.
+- After configuration, the UI prompts the user to bookmark the page for faster reuse.
 
-## ユーザー体験
-- スマートフォンの片手操作を想定し、ボタンや入力領域を大きめに配置する。
-- 時間入力の必要桁数が揃った時点で自動的に換算結果画面へ遷移し、結果を提示する。
-- 状態管理はクエリパラメータのみで行い、再訪時も同じ体験を再現する。
+## User Experience
+- Layout favors one-handed smartphone operation with large buttons and generous touch targets.
+- Automatic transition from input to result view once the required digits are entered.
+- Application state relies on URL query parameters so repeated visits reproduce the same experience.
+

@@ -1,7 +1,7 @@
 {
   "name": "towatt",
   "version": "0.1.0",
-  "description": "電子レンジ加熱時間換算ツール",
+  "description": "Microwave heating time converter",
   "scripts": {
     "clean": "rm -rf build dist",
     "build:bundle": "node scripts/build-app.mjs",

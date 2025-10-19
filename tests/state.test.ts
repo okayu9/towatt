@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { createAppStore, createInitialState } from "../src/app/state";
 
 describe("createAppStore", () => {
-  it("状態更新時に購読者へ通知する", () => {
+  it("notifies subscribers when state is updated", () => {
     const store = createAppStore(createInitialState());
     const listener = vi.fn();
     store.subscribe(listener);
@@ -15,7 +15,7 @@ describe("createAppStore", () => {
     expect(listener).toHaveBeenCalledWith(nextState);
   });
 
-  it("batchUpdate は1回だけ通知する", () => {
+  it("emits only once when using batchUpdate", () => {
     const store = createAppStore(createInitialState());
     const listener = vi.fn();
     store.subscribe(listener);

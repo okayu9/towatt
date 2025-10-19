@@ -1,61 +1,63 @@
 # Towatt
 
-## 概要
-- 電子レンジの出力違いによる加熱時間を換算するシングルページアプリケーションです。
-- 対応ワット数をクエリパラメータ（例: `?target=600`）で指定でき、ブックマークから即利用できます。
-- TypeScript + esbuild と vanilla-extract を用い、最終成果物は HTML1枚に CSS/JS をインライン化した構成です。
+## Overview
+- Single-page application that converts microwave heating time between different wattages.
+- Target wattage can be supplied via query parameter (for example, `?target=600`) enabling bookmarkable presets.
+- Built with TypeScript, esbuild, and vanilla-extract. The final deliverable is a single HTML file with inlined CSS/JS.
 
-## 特長
-- プリセット（1500W / 700W / 600W / 500W）と任意入力を切り替えて弁当ラベルのワット数を指定可能です。
-- 4桁固定のテンキー入力で分秒を正規化し、対応ワット数で必要な時間を自動算出します。
-- スマートフォン操作を想定した大きめのUIと `aria-live` によるスクリーンリーダー配慮を実装しています。
-- 対応ワット数付きURLでアクセスした場合は換算画面から開始し、設定が未済なら初期画面で案内します。
+## Features
+- Offers preset wattages (1500W / 700W / 600W / 500W) and manual input for label wattage selection.
+- Four-digit keypad normalizes minutes and seconds, then calculates the required heating time for the target wattage.
+- Mobile-first layout with large controls and `aria-live` support for assistive technologies.
+- When accessed with a target wattage, the app loads directly into the conversion view; otherwise it guides users through setup.
 
-## プロジェクト構成
+## Project Structure
 ```
-├─ docs/                # 要件・実装メモ
-├─ scripts/             # ビルド補助スクリプト (Node.js ES Modules)
-├─ src/                 # HTML / TypeScript / vanilla-extract スタイル定義
-├─ package.json         # スクリプトと依存関係
-├─ tsconfig.json        # TypeScript コンパイラ設定
-└─ (build|dist)/        # ビルド時に生成される成果物
+├─ docs/                # Requirements and implementation notes
+├─ scripts/             # Build helper scripts (Node.js ES modules)
+├─ src/                 # HTML / TypeScript / vanilla-extract styles
+├─ package.json         # Scripts and dependencies
+├─ tsconfig.json        # TypeScript compiler options
+└─ (build|dist)/        # Generated artifacts
 ```
 
-詳細な要件や実装方針は `docs/requirements.md` と `docs/implementation.md` をご参照ください。
+See `docs/requirements.md` for detailed specifications.
 
-## セットアップ
-### 前提条件
-- Node.js 22 LTS 以降（ESM と esbuild の動作確認済みバージョンを推奨）
-- npm (Node.js 同梱)
+## Setup
+### Prerequisites
+- Node.js 22 LTS or later
+- npm (bundled with Node.js)
 
-### インストール
+### Installation
 ```bash
 npm install
 ```
 
-## 利用方法
-基本的なフローは以下の通りです。
-1. `npm run build` で TypeScript と vanilla-extract をバンドルし、`build/` に IIFE 形式の `main.js` と `main.css` を生成します。
-2. `npm run inline-css` で `src/index.html` に CSS をインライン化した `build/index.html` を作成します。
-3. `npm run bundle-html` で JavaScript をインライン化し、配布用の `dist/index.html` を出力します。
-4. 完全なビルドを一括実行する場合は `npm run dist` をお使いください（`clean → build → inline-css → bundle-html` の順で処理します）。
+## Usage
+1. `npm run build` bundles TypeScript and styles into `build/main.js` and `build/main.css` (IIFE output).
+2. `npm run inline-css` inlines the compiled CSS into `build/index.html`.
+3. `npm run bundle-html` inlines the JavaScript and produces `dist/index.html` for distribution.
+4. `npm run dist` executes the entire pipeline (`clean → build → inline-css → bundle-html`).
 
-出力された `dist/index.html` をブラウザで開くと、オフラインでも単独で動作します。シンプルなHTTPサーバー経由で確認する場合は、以下のように実行できます。
+Open `dist/index.html` directly in a browser or serve it with a static file server such as:
 ```bash
 npx serve dist
 ```
 
-## 計算ロジックの概要
-- 熱量等価の式 `sourcePower * sourceTime = targetPower * targetTime` を使用し、四捨五入 (`Math.round`) で秒単位に換算します。
-- テンキー入力は常に4桁を受け取り、上位2桁を分、下位2桁を秒として解釈した後で正規化します。
-- 結果は `mm:ss` 形式で表示し、補足として合計秒数を示します。
+## Calculation Logic
+- Uses the energy equivalence formula `sourcePower * sourceTime = targetPower * targetTime`.
+- Accepts four-digit keypad input representing minutes and seconds, then normalizes to total seconds.
+- Conversion result is rendered in `mm:ss` format, with additional total seconds displayed in the UI.
 
-## npm スクリプト一覧
-- `npm run clean` : `build/` と `dist/` を削除します。
-- `npm run build` : esbuild で TypeScript とスタイルをバンドルします。
-- `npm run inline-css` : ビルド済み CSS を HTML にインライン化します。
-- `npm run bundle-html` : ビルド済み JS を HTML にインライン化します。
-- `npm run dist` : クリーンから最終出力までの一連の処理を行います。
+## npm Scripts
+- `npm run clean` — Remove `build/` and `dist/` directories.
+- `npm run build` — Bundle TypeScript and styles with esbuild.
+- `npm run inline-css` — Inline CSS into the HTML template.
+- `npm run bundle-html` — Inline JavaScript into the HTML template.
+- `npm run dist` — Execute the full clean/build/inline pipeline.
+- `npm test` — Run the Vitest suite once.
+- `npm test -- --coverage` — Run tests with coverage reporting.
 
-## ライセンス
-- 本プロジェクトのライセンスは `package.json` に従い ISC です。
+## License
+ISC (see `package.json`).
+

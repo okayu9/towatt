@@ -2,10 +2,11 @@ import { TIME_DIGITS } from "./constants";
 import type { AppElements } from "./dom";
 import { formatClock, parseRawTime } from "./logic";
 import type { AppState } from "./types";
+import { translate, type LocaleDictionary } from "./i18n";
 
 const NBSP = "\u00A0";
 
-export function createRenderer(elements: AppElements) {
+export function createRenderer(elements: AppElements, locale: LocaleDictionary) {
   return function render(state: AppState): void {
     renderViews(state);
     renderTargetState(state);
@@ -64,17 +65,22 @@ export function createRenderer(elements: AppElements) {
     if (state.rawTimeInput.length === TIME_DIGITS) {
       const preview = parseRawTime(state.rawTimeInput);
       const secondsText = preview.seconds.toString().padStart(2, "0");
-      elements.timePreviewNormalized.textContent = `正規化: ${preview.minutes}分${secondsText}秒`;
-      elements.timePreviewSeconds.textContent = `合計 ${preview.totalSeconds}秒`;
+      elements.timePreviewNormalized.textContent = translate(locale, "time.preview.normalized", {
+        minutes: preview.minutes,
+        seconds: secondsText,
+      });
+      elements.timePreviewSeconds.textContent = translate(locale, "time.preview.total", {
+        seconds: preview.totalSeconds,
+      });
     } else {
-      elements.timePreviewNormalized.textContent = "入力待ち";
+      elements.timePreviewNormalized.textContent = translate(locale, "time.preview.waiting");
       elements.timePreviewSeconds.textContent = "";
     }
   }
 
   function renderResultState(state: AppState): void {
     if (!state.lastResult) {
-      elements.resultDisplay.textContent = "結果待ち";
+      elements.resultDisplay.textContent = translate(locale, "result.pending");
       elements.resultSeconds.textContent = "";
       return;
     }
@@ -82,7 +88,9 @@ export function createRenderer(elements: AppElements) {
     const minutes = Math.floor(state.lastResult.targetSeconds / 60);
     const seconds = state.lastResult.targetSeconds % 60;
     elements.resultDisplay.textContent = formatClock(minutes, seconds);
-    elements.resultSeconds.textContent = "";
+    elements.resultSeconds.textContent = translate(locale, "result.totalSeconds", {
+      seconds: state.lastResult.targetSeconds,
+    });
   }
 
   function renderCalculationStep(state: AppState): void {

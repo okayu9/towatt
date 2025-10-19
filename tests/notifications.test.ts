@@ -16,21 +16,21 @@ describe("createBannerNotifier", () => {
     vi.useRealTimers();
   });
 
-  it("show でメッセージを表示し一定時間後に隠す", () => {
+  it("shows message and hides it after the configured duration", () => {
     const notifier = createBannerNotifier(element, 1000);
-    notifier.show("エラーです");
+    notifier.show("Error message");
 
     expect(element.hidden).toBe(false);
-    expect(element.textContent).toBe("エラーです");
+    expect(element.textContent).toBe("Error message");
 
     vi.advanceTimersByTime(1000);
 
     expect(element.hidden).toBe(true);
   });
 
-  it("hide でタイマーをクリアして即座に非表示にする", () => {
+  it("hide clears the timer and hides immediately", () => {
     const notifier = createBannerNotifier(element, 1000);
-    notifier.show("表示");
+    notifier.show("Visible");
     notifier.hide();
 
     expect(element.hidden).toBe(true);

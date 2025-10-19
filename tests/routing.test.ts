@@ -10,12 +10,12 @@ describe("routing", () => {
     window.location.href = baseUrl;
   });
 
-  it("範囲内の target クエリを解析する", () => {
+  it("parses target query values within range", () => {
     window.location.href = `${baseUrl}?target=${POWER_MIN}`;
     expect(parseTargetFromQuery()).toBe(POWER_MIN);
   });
 
-  it("不正値は null を返す", () => {
+  it("returns null for invalid values", () => {
     window.location.href = `${baseUrl}?target=${POWER_MAX + 10}`;
     expect(parseTargetFromQuery()).toBeNull();
 
@@ -23,14 +23,14 @@ describe("routing", () => {
     expect(parseTargetFromQuery()).toBeNull();
   });
 
-  it("updateTargetParam で URL を置換する", () => {
+  it("updates the URL via updateTargetParam", () => {
     const spy = vi.spyOn(window.history, "replaceState");
     updateTargetParam(600);
     expect(spy).toHaveBeenCalledWith(null, "", `${baseUrl}?target=600`);
     spy.mockRestore();
   });
 
-  it("removeTargetParam でクエリを削除する", () => {
+  it("removes the query parameter via removeTargetParam", () => {
     window.location.href = `${baseUrl}?target=500`;
     const spy = vi.spyOn(window.history, "replaceState");
     removeTargetParam();
