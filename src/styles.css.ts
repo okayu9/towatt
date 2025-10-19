@@ -4,15 +4,16 @@ export const themeVars = createGlobalTheme(':root', {
   color: {
     background: '#f7f7f8',
     surface: '#ffffff',
+    panelBackground: 'rgba(255, 255, 255, 0.92)',
+    panelBorder: '#e0e0ec',
+    stageFrom: '#e6ecff',
+    stageTo: '#fdf0ff',
     text: '#1f1f24',
     subtleText: '#4a4a55',
     mutedText: '#6c6c76',
     border: '#d0d0d8',
-    panelBorder: '#e0e0ec',
     primary: '#5078ff',
     primaryAlt: '#40c3ff',
-    toastBackground: 'rgba(80, 120, 255, 0.92)',
-    toastText: '#ffffff',
     presetActiveBg: 'rgba(80, 120, 255, 0.08)',
     keypadActiveBg: 'rgba(80, 120, 255, 0.12)',
     errorBackground: 'rgba(234, 64, 89, 0.16)',
@@ -31,6 +32,9 @@ export const themeVars = createGlobalTheme(':root', {
     input: '12px',
     keypad: '16px',
   },
+  shadow: {
+    panel: '0 32px 72px rgba(36, 62, 128, 0.18)',
+  },
 });
 
 globalStyle(':root', {
@@ -40,7 +44,7 @@ globalStyle(':root', {
   backgroundColor: themeVars.color.background,
   color: themeVars.color.text,
   vars: {
-    '--app-background': themeVars.color.background,
+    '--app-background': `linear-gradient(135deg, ${themeVars.color.stageFrom} 0%, ${themeVars.color.stageTo} 100%)`,
   },
 });
 
@@ -50,29 +54,30 @@ globalStyle('*', {
 
 globalStyle('body', {
   margin: 0,
-  background: `var(--app-background, ${themeVars.color.background})`,
+  minHeight: '100vh',
+  background: `var(--app-background, linear-gradient(135deg, ${themeVars.color.stageFrom} 0%, ${themeVars.color.stageTo} 100%))`,
+  backgroundAttachment: 'fixed',
 });
 
 globalStyle('.app', {
-  minHeight: '100vh',
-  maxWidth: '420px',
+  minHeight: '100svh',
+  width: '100%',
+  maxWidth: 'min(960px, 100%)',
   margin: '0 auto',
-  padding: '24px 20px 40px',
+  padding: 'clamp(32px, 5vw, 84px) clamp(20px, 6vw, 96px)',
   display: 'flex',
   flexDirection: 'column',
-  gap: '24px',
-  '@media': {
-    '(min-width: 480px)': {
-      padding: '32px 24px 48px',
-    },
-  },
+  gap: '32px',
 });
 
 globalStyle('.view', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 0,
+  position: 'relative',
+  display: 'grid',
+  gridAutoRows: 'minmax(0, 1fr)',
+  justifyItems: 'stretch',
+  alignContent: 'center',
   flex: 1,
+  width: '100%',
 });
 
 globalStyle('.view[hidden]', {
@@ -85,14 +90,26 @@ globalStyle('.view__header', {
 
 globalStyle('.view__title', {
   margin: '0 0 4px',
-  fontSize: '20px',
+  fontSize: 'clamp(26px, 5vw, 36px)',
   fontWeight: 700,
 });
 
 globalStyle('.view__lead', {
   margin: 0,
-  fontSize: '15px',
+  fontSize: 'clamp(15px, 3vw, 18px)',
   color: themeVars.color.subtleText,
+});
+
+globalStyle('.view__panel', {
+  display: 'grid',
+  gap: '24px',
+  padding: 'clamp(32px, 6vw, 72px)',
+  borderRadius: '32px',
+  background: themeVars.color.panelBackground,
+  boxShadow: themeVars.shadow.panel,
+  border: `1px solid ${themeVars.color.panelBorder}`,
+  width: '100%',
+  backdropFilter: 'blur(18px)',
 });
 
 globalStyle('.view__note', {
@@ -141,11 +158,26 @@ globalStyle('.section-title', {
   fontWeight: 700,
 });
 
+globalStyle('.calc-stage', {
+  display: 'grid',
+  width: '100%',
+  gridAutoRows: 'minmax(0, 1fr)',
+});
+
 globalStyle('.calc-step', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px',
-  minHeight: 'calc(100vh - 120px)',
+  display: 'grid',
+  gridTemplateRows: 'auto 1fr auto',
+  gap: 'clamp(24px, 4vw, 40px)',
+  padding: 'clamp(32px, 6vw, 80px)',
+  borderRadius: '32px',
+  background: themeVars.color.panelBackground,
+  boxShadow: themeVars.shadow.panel,
+  border: `1px solid ${themeVars.color.panelBorder}`,
+  minHeight: 'min(80vh, 760px)',
+  width: '100%',
+  maxWidth: 'min(840px, 100%)',
+  justifySelf: 'center',
+  backdropFilter: 'blur(18px)',
 });
 
 globalStyle('.calc-step[hidden]', {
@@ -157,28 +189,54 @@ globalStyle('.calc-step__header', {
 });
 
 globalStyle('.calc-step__meta', {
-  margin: '0 0 8px',
-  fontSize: '13px',
+  margin: 0,
+  fontSize: '12px',
+  color: themeVars.color.mutedText,
+  fontWeight: 600,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  flexWrap: 'wrap',
+});
+
+globalStyle('.calc-step__meta-badge', {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '4px 12px',
+  borderRadius: themeVars.radius.pill,
+  background: 'rgba(80, 120, 255, 0.12)',
+  color: themeVars.color.secondaryText,
+});
+
+globalStyle('.calc-step__meta-value', {
+  fontSize: '14px',
+  fontWeight: 700,
+});
+
+globalStyle('.calc-step__meta-unit', {
+  fontSize: '11px',
   color: themeVars.color.subtleText,
 });
 
 globalStyle('.calc-step__title', {
   margin: '0 0 4px',
-  fontSize: '22px',
+  fontSize: 'clamp(26px, 5vw, 36px)',
   fontWeight: 700,
 });
 
 globalStyle('.calc-step__lead', {
   margin: 0,
-  fontSize: '15px',
+  fontSize: 'clamp(15px, 3vw, 18px)',
   color: themeVars.color.subtleText,
 });
 
 globalStyle('.calc-step__actions', {
-  marginTop: 'auto',
   display: 'flex',
   flexDirection: 'column',
   gap: '12px',
+  alignSelf: 'flex-end',
+  width: '100%',
 });
 
 globalStyle('.calc-step__actions--split', {
@@ -221,47 +279,38 @@ globalStyle('.calc-step__ghost', {
   color: themeVars.color.subtleText,
 });
 
-globalStyle('.bookmark', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4px',
-  padding: '16px',
-  borderRadius: themeVars.radius.card,
-  background: themeVars.color.surface,
-  border: `1px solid ${themeVars.color.panelBorder}`,
-  wordBreak: 'break-all',
-});
-
-globalStyle('.bookmark__label', {
-  fontSize: '13px',
-  color: themeVars.color.subtleText,
-  fontWeight: 600,
-});
-
-globalStyle('.bookmark__value', {
-  fontFamily: "'SFMono-Regular', Consolas, 'Liberation Mono', monospace",
-  fontSize: '15px',
+globalStyle('.source-power', {
+  display: 'grid',
+  gap: 'clamp(16px, 4vw, 28px)',
 });
 
 globalStyle('.preset-buttons', {
   display: 'grid',
-  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-  gap: '10px',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+  gap: '14px',
 });
 
 globalStyle('.preset-button', {
-  padding: '12px',
-  fontSize: '16px',
-  borderRadius: themeVars.radius.card,
-  border: `1px solid ${themeVars.color.border}`,
+  padding: '16px',
+  fontSize: '18px',
+  borderRadius: '18px',
+  border: `1px solid ${themeVars.color.panelBorder}`,
   background: themeVars.color.surface,
   fontWeight: 600,
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
 });
 
 globalStyle('.preset-button.is-active', {
   borderColor: themeVars.color.primary,
   background: themeVars.color.presetActiveBg,
   color: themeVars.color.text,
+  transform: 'translateY(-2px)',
+  boxShadow: '0 16px 32px rgba(80, 120, 255, 0.15)',
+});
+
+globalStyle('.preset-button:hover', {
+  transform: 'translateY(-2px)',
+  boxShadow: '0 16px 28px rgba(33, 56, 120, 0.12)',
 });
 
 globalStyle('.manual-input', {
@@ -277,10 +326,10 @@ globalStyle('.manual-input__label', {
 });
 
 globalStyle('.manual-input input', {
-  fontSize: '18px',
-  padding: '10px 12px',
-  borderRadius: themeVars.radius.input,
-  border: `1px solid ${themeVars.color.border}`,
+  fontSize: '20px',
+  padding: '14px 16px',
+  borderRadius: '16px',
+  border: `1px solid ${themeVars.color.panelBorder}`,
   textAlign: 'right',
 });
 
@@ -290,35 +339,72 @@ globalStyle('.manual-input input:focus', {
 });
 
 globalStyle('.time-input__display', {
-  padding: '16px',
-  borderRadius: themeVars.radius.card,
+  padding: '24px',
+  borderRadius: '24px',
   background: themeVars.color.surface,
   border: `1px solid ${themeVars.color.panelBorder}`,
   textAlign: 'center',
-  fontSize: '32px',
   fontWeight: 700,
 });
 
-globalStyle('.time-input__guidance', {
-  margin: '8px 0 0',
-  fontSize: '13px',
-  color: themeVars.color.subtleText,
+globalStyle('.time-display', {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '12px',
+  fontSize: 'clamp(40px, 6vw, 56px)',
+  fontVariantNumeric: 'tabular-nums',
+});
+
+globalStyle('.time-digit', {
+  display: 'inline-flex',
+  justifyContent: 'center',
+  minWidth: '1.5ch',
+  padding: '0 2px 6px',
+  borderBottom: '3px solid transparent',
+  transition: 'border-color 0.2s ease, color 0.2s ease',
+});
+
+globalStyle('.time-digit.is-empty', {
+  color: themeVars.color.mutedText,
+  opacity: 0.7,
+});
+
+globalStyle('.time-digit.is-active', {
+  borderColor: themeVars.color.primary,
+  color: themeVars.color.primary,
+  opacity: 1,
+});
+
+globalStyle('.time-digit-separator', {
+  opacity: 0.35,
+});
+
+globalStyle('.time-digit-separator::selection', {
+  background: 'transparent',
+});
+
+globalStyle('.time-digit::selection', {
+  background: 'transparent',
 });
 
 globalStyle('.keypad', {
-  marginTop: '16px',
+  marginTop: '24px',
   display: 'grid',
   gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-  gap: '12px',
+  gap: '16px',
 });
 
 globalStyle('.keypad__key', {
-  padding: '16px',
-  fontSize: '18px',
-  borderRadius: themeVars.radius.keypad,
-  border: `1px solid ${themeVars.color.border}`,
+  padding: '18px',
+  fontSize: 'clamp(18px, 3vw, 22px)',
+  borderRadius: '20px',
+  border: `1px solid ${themeVars.color.panelBorder}`,
   background: themeVars.color.surface,
   fontWeight: 600,
+});
+
+globalStyle('.keypad__key--zero', {
+  gridColumn: '2 / 3',
 });
 
 globalStyle('.keypad__key:active', {
@@ -326,58 +412,46 @@ globalStyle('.keypad__key:active', {
 });
 
 globalStyle('.time-preview', {
-  marginTop: '12px',
+  marginTop: '18px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '4px',
-  fontSize: '15px',
+  gap: '6px',
+  fontSize: '16px',
 });
 
 globalStyle('.time-preview__seconds', {
   color: themeVars.color.subtleText,
-  fontSize: '13px',
+  fontSize: '14px',
 });
 
 globalStyle('.result', {
-  padding: '20px',
-  borderRadius: themeVars.radius.largeCard,
+  padding: '28px',
+  borderRadius: '28px',
   background: themeVars.color.surface,
   border: `1px solid ${themeVars.color.panelBorder}`,
+  boxShadow: '0 20px 44px rgba(33, 56, 120, 0.12)',
 });
 
 globalStyle('.result__summary', {
-  margin: '0 0 8px',
-  fontSize: '26px',
+  margin: '0 0 10px',
+  fontSize: 'clamp(28px, 4vw, 36px)',
   fontWeight: 700,
 });
 
 globalStyle('.result__seconds', {
-  margin: '0 0 12px',
-  fontSize: '16px',
+  margin: '0 0 16px',
+  fontSize: 'clamp(16px, 3vw, 18px)',
   color: themeVars.color.subtleText,
+});
+
+globalStyle('.result__seconds:empty', {
+  display: 'none',
 });
 
 globalStyle('.result__note', {
   margin: 0,
   fontSize: '12px',
   color: themeVars.color.mutedText,
-});
-
-globalStyle('.toast', {
-  position: 'sticky',
-  top: '12px',
-  margin: '-12px 0',
-  padding: '12px 16px',
-  borderRadius: themeVars.radius.pill,
-  background: themeVars.color.toastBackground,
-  color: themeVars.color.toastText,
-  textAlign: 'center',
-  fontWeight: 600,
-  zIndex: 10,
-});
-
-globalStyle('.toast[hidden]', {
-  display: 'none',
 });
 
 globalStyle('.error-banner', {
