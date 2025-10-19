@@ -68,6 +68,12 @@ globalStyle('.app', {
   display: 'flex',
   flexDirection: 'column',
   gap: '32px',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      padding: '16px 10px 24px',
+      gap: '16px',
+    },
+  },
 });
 
 globalStyle('.view', {
@@ -110,6 +116,13 @@ globalStyle('.view__panel', {
   border: `1px solid ${themeVars.color.panelBorder}`,
   width: '100%',
   backdropFilter: 'blur(18px)',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      padding: '24px 18px 28px',
+      gap: '18px',
+      borderRadius: '20px',
+    },
+  },
 });
 
 globalStyle('.view__note', {
@@ -130,11 +143,18 @@ globalStyle('.setup-form__label', {
 });
 
 globalStyle('.setup-form__input', {
-  fontSize: '20px',
-  padding: '12px 14px',
+  fontSize: '22px',
+  padding: '14px 16px',
+  minHeight: '56px',
   border: `2px solid ${themeVars.color.border}`,
   borderRadius: themeVars.radius.input,
   textAlign: 'right',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      fontSize: '24px',
+      padding: '16px 18px',
+    },
+  },
 });
 
 globalStyle('.setup-form__input:focus', {
@@ -143,8 +163,9 @@ globalStyle('.setup-form__input:focus', {
 });
 
 globalStyle('.setup-form__submit', {
-  fontSize: '16px',
-  padding: '12px',
+  fontSize: '20px',
+  padding: '16px',
+  minHeight: '56px',
   borderRadius: themeVars.radius.pill,
   border: 'none',
   background: `linear-gradient(135deg, ${themeVars.color.primary} 0%, ${themeVars.color.primaryAlt} 100%)`,
@@ -162,6 +183,7 @@ globalStyle('.calc-stage', {
   display: 'grid',
   width: '100%',
   gridAutoRows: 'minmax(0, 1fr)',
+  gap: '16px',
 });
 
 globalStyle('.calc-step', {
@@ -178,6 +200,14 @@ globalStyle('.calc-step', {
   maxWidth: 'min(840px, 100%)',
   justifySelf: 'center',
   backdropFilter: 'blur(18px)',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      gap: '24px',
+      padding: '24px 16px 28px',
+      borderRadius: '24px',
+      minHeight: 'auto',
+    },
+  },
 });
 
 globalStyle('.calc-step[hidden]', {
@@ -190,13 +220,19 @@ globalStyle('.calc-step__header', {
 
 globalStyle('.calc-step__meta', {
   margin: 0,
-  fontSize: '12px',
+  fontSize: '13px',
   color: themeVars.color.mutedText,
   fontWeight: 600,
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
   flexWrap: 'wrap',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      fontSize: '14px',
+      gap: '6px',
+    },
+  },
 });
 
 globalStyle('.calc-step__meta-badge', {
@@ -237,6 +273,11 @@ globalStyle('.calc-step__actions', {
   gap: '12px',
   alignSelf: 'flex-end',
   width: '100%',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      gap: '10px',
+    },
+  },
 });
 
 globalStyle('.calc-step__actions--split', {
@@ -250,11 +291,19 @@ globalStyle('.calc-step__actions--split button', {
 });
 
 globalStyle('.calc-step__next, .calc-step__secondary, .calc-step__ghost', {
-  padding: '14px',
+  padding: '16px 18px',
   borderRadius: themeVars.radius.pill,
-  fontSize: '16px',
+  fontSize: '18px',
   fontWeight: 600,
   border: 'none',
+  minHeight: '58px',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      fontSize: '20px',
+      minHeight: '62px',
+      padding: '18px',
+    },
+  },
 });
 
 globalStyle('.calc-step__next', {
@@ -288,16 +337,30 @@ globalStyle('.preset-buttons', {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
   gap: '14px',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+      gap: '10px',
+    },
+  },
 });
 
 globalStyle('.preset-button', {
-  padding: '16px',
-  fontSize: '18px',
+  padding: '20px 16px',
+  fontSize: '20px',
   borderRadius: '18px',
   border: `1px solid ${themeVars.color.panelBorder}`,
   background: themeVars.color.surface,
   fontWeight: 600,
+  minHeight: '72px',
   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      fontSize: '22px',
+      padding: '22px 16px',
+      minHeight: '76px',
+    },
+  },
 });
 
 globalStyle('.preset-button.is-active', {
@@ -314,7 +377,7 @@ globalStyle('.preset-button:hover', {
 });
 
 globalStyle('.manual-input', {
-  marginTop: '12px',
+  marginTop: '8px',
   display: 'flex',
   flexDirection: 'column',
   gap: '8px',
@@ -326,11 +389,18 @@ globalStyle('.manual-input__label', {
 });
 
 globalStyle('.manual-input input', {
-  fontSize: '20px',
-  padding: '14px 16px',
+  fontSize: '22px',
+  padding: '16px 18px',
+  minHeight: '56px',
   borderRadius: '16px',
   border: `1px solid ${themeVars.color.panelBorder}`,
   textAlign: 'right',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      fontSize: '24px',
+      padding: '18px 20px',
+    },
+  },
 });
 
 globalStyle('.manual-input input:focus', {
@@ -339,12 +409,17 @@ globalStyle('.manual-input input:focus', {
 });
 
 globalStyle('.time-input__display', {
-  padding: '24px',
+  padding: '22px',
   borderRadius: '24px',
   background: themeVars.color.surface,
   border: `1px solid ${themeVars.color.panelBorder}`,
   textAlign: 'center',
   fontWeight: 700,
+  '@media': {
+    'screen and (max-width: 640px)': {
+      padding: '20px 18px',
+    },
+  },
 });
 
 globalStyle('.time-display', {
@@ -388,19 +463,34 @@ globalStyle('.time-digit::selection', {
 });
 
 globalStyle('.keypad', {
-  marginTop: '24px',
+  marginTop: '20px',
   display: 'grid',
   gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
   gap: '16px',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      gap: '12px',
+    },
+  },
 });
 
 globalStyle('.keypad__key', {
-  padding: '18px',
-  fontSize: 'clamp(18px, 3vw, 22px)',
+  padding: '0 14px',
+  fontSize: 'clamp(20px, 5vw, 26px)',
   borderRadius: '20px',
   border: `1px solid ${themeVars.color.panelBorder}`,
   background: themeVars.color.surface,
   fontWeight: 600,
+  minHeight: '72px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      minHeight: '76px',
+      fontSize: 'clamp(22px, 6vw, 28px)',
+    },
+  },
 });
 
 globalStyle('.keypad__key--zero', {
@@ -412,11 +502,16 @@ globalStyle('.keypad__key:active', {
 });
 
 globalStyle('.time-preview', {
-  marginTop: '18px',
+  marginTop: '14px',
   display: 'flex',
   flexDirection: 'column',
   gap: '6px',
   fontSize: '16px',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      fontSize: '15px',
+    },
+  },
 });
 
 globalStyle('.time-preview__seconds', {
@@ -425,23 +520,32 @@ globalStyle('.time-preview__seconds', {
 });
 
 globalStyle('.result', {
-  padding: '28px',
+  padding: '24px',
   borderRadius: '28px',
   background: themeVars.color.surface,
   border: `1px solid ${themeVars.color.panelBorder}`,
   boxShadow: '0 20px 44px rgba(33, 56, 120, 0.12)',
+  '@media': {
+    'screen and (max-width: 640px)': {
+      padding: '20px 18px 22px',
+      borderRadius: '22px',
+    },
+  },
 });
 
 globalStyle('.result__summary', {
   margin: '0 0 10px',
-  fontSize: 'clamp(28px, 4vw, 36px)',
+  fontSize: 'clamp(34px, 8vw, 48px)',
   fontWeight: 700,
+  letterSpacing: '0.02em',
+  textAlign: 'center',
 });
 
 globalStyle('.result__seconds', {
   margin: '0 0 16px',
-  fontSize: 'clamp(16px, 3vw, 18px)',
+  fontSize: 'clamp(18px, 4vw, 22px)',
   color: themeVars.color.subtleText,
+  textAlign: 'center',
 });
 
 globalStyle('.result__seconds:empty', {
