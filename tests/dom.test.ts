@@ -34,4 +34,14 @@ describe("DOM utilities", () => {
     expect(() => queryAppElements()).toThrowError();
     errorSpy.mockRestore();
   });
+
+  it("throws when repeated required markup has an unexpected count", () => {
+    createAppElementsStub();
+    document.querySelector(".time-digit")?.remove();
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    expect(() => queryAppElements()).toThrowError(/Required elements missing/);
+
+    errorSpy.mockRestore();
+  });
 });

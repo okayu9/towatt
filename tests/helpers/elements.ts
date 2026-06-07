@@ -85,6 +85,12 @@ export function createAppElementsStub(): AppElements {
 
   const targetPowerValues = [document.createElement("span"), document.createElement("span")];
   const sourcePowerIndicators = [document.createElement("span")];
+  targetPowerValues.forEach((element) => {
+    element.dataset.bind = "target-power";
+  });
+  sourcePowerIndicators.forEach((element) => {
+    element.dataset.bind = "source-power";
+  });
 
   const timeDigits = Array.from({ length: 4 }, () => {
     const span = document.createElement("span");
@@ -146,4 +152,3 @@ export function createAppElementsStub(): AppElements {
     privacyDismissButtons: [privacyModalOverlay, privacyDismissButton],
   } satisfies AppElements;
 }
-

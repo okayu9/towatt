@@ -34,6 +34,20 @@ function expectElement<T extends Element>(element: T | null, selector: string): 
   return element;
 }
 
+function expectElements<T extends Element>(
+  elements: T[],
+  selector: string,
+  options: { min?: number; exact?: number } = {},
+): T[] {
+  const { min = 1, exact } = options;
+  const isInvalid = exact === undefined ? elements.length < min : elements.length !== exact;
+  if (isInvalid) {
+    console.error(`Required elements missing for selector: ${selector}`);
+    throw new Error(`Required elements missing for selector: ${selector}`);
+  }
+  return elements;
+}
+
 export function queryAppElements(): AppElements {
   const presetButtonsContainer = expectElement(
     document.querySelector<HTMLElement>(".preset-buttons"),
@@ -63,11 +77,13 @@ export function queryAppElements(): AppElements {
       document.getElementById("setup-target-input") as HTMLInputElement | null,
       "#setup-target-input",
     ),
-    targetPowerValues: Array.from(
-      document.querySelectorAll<HTMLElement>("[data-bind='target-power']"),
+    targetPowerValues: expectElements(
+      Array.from(document.querySelectorAll<HTMLElement>("[data-bind='target-power']")),
+      "[data-bind='target-power']",
     ),
-    sourcePowerIndicators: Array.from(
-      document.querySelectorAll<HTMLElement>("[data-bind='source-power']"),
+    sourcePowerIndicators: expectElements(
+      Array.from(document.querySelectorAll<HTMLElement>("[data-bind='source-power']")),
+      "[data-bind='source-power']",
     ),
     sourceStep: expectElement(document.getElementById("source-step"), "#source-step"),
     timeStep: expectElement(document.getElementById("time-step"), "#time-step"),
@@ -92,7 +108,11 @@ export function queryAppElements(): AppElements {
     resultDisplay: expectElement(document.getElementById("result-display"), "#result-display"),
     resultSeconds: expectElement(document.getElementById("result-seconds"), "#result-seconds"),
     errorBanner: expectElement(document.getElementById("error-banner"), "#error-banner"),
-    timeDigits: Array.from(document.querySelectorAll<HTMLElement>(".time-digit")),
+    timeDigits: expectElements(
+      Array.from(document.querySelectorAll<HTMLElement>(".time-digit")),
+      ".time-digit",
+      { exact: 4 },
+    ),
     privacyOpenButton: expectElement(
       document.getElementById("privacy-open") as HTMLButtonElement | null,
       "#privacy-open",
@@ -106,8 +126,9 @@ export function queryAppElements(): AppElements {
       privacyModal.querySelector<HTMLElement>(".privacy-modal__panel"),
       ".privacy-modal__panel",
     ),
-    privacyDismissButtons: Array.from(
-      privacyModal.querySelectorAll<HTMLElement>("[data-privacy-dismiss]"),
+    privacyDismissButtons: expectElements(
+      Array.from(privacyModal.querySelectorAll<HTMLElement>("[data-privacy-dismiss]")),
+      "[data-privacy-dismiss]",
     ),
   };
 }

@@ -1,7 +1,7 @@
 import http from "node:http";
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
-import { extname, resolve } from "node:path";
+import { extname, relative, resolve, sep } from "node:path";
 
 const DIST_DIR = resolve("dist");
 const HOST = process.env.HOST ?? "127.0.0.1";
@@ -25,17 +25,25 @@ function toDistPath(urlPath: string): string {
   const normalized = safePath === "/" ? "/index.html" : safePath;
   const segments = normalized.split("/").filter(Boolean);
   const fullPath = resolve(DIST_DIR, ...segments);
-  if (!fullPath.startsWith(DIST_DIR)) {
+  const relativePath = relative(DIST_DIR, fullPath);
+  if (relativePath === ".." || relativePath.startsWith(`..${sep}`) || resolve(relativePath) === relativePath) {
     return resolve(DIST_DIR, "index.html");
   }
   return fullPath;
 }
 
+async function resolveDistFile(urlPath: string): Promise<string> {
+  const filePath = toDistPath(urlPath);
+  const fileStat = await stat(filePath).catch(() => null);
+  if (!fileStat) {
+    return resolve(DIST_DIR, "index.html");
+  }
+  return fileStat.isDirectory() ? resolve(filePath, "index.html") : filePath;
+}
+
 const server = http.createServer(async (req, res) => {
   try {
-    const filePath = toDistPath(req.url ?? "/");
-    const fileStat = await stat(filePath).catch(() => stat(resolve(DIST_DIR, "index.html")));
-    const streamPath = fileStat.isDirectory() ? resolve(filePath, "index.html") : filePath;
+    const streamPath = await resolveDistFile(req.url ?? "/");
     const ext = extname(streamPath);
 
     res.writeHead(200, {

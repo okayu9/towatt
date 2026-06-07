@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "description": "Microwave heating time converter",
   "scripts": {
-    "clean": "rm -rf build dist",
+    "clean": "tsx --tsconfig tsconfig.scripts.json scripts/clean.ts",
     "build:bundle": "tsx --tsconfig tsconfig.scripts.json scripts/build-app.ts",
     "build": "npm run clean && npm run build:bundle",
+    "typecheck": "npm run typecheck:app && npm run typecheck:scripts && npm run typecheck:e2e",
+    "typecheck:app": "tsc -p tsconfig.json --noEmit",
+    "typecheck:scripts": "tsc -p tsconfig.scripts.json",
+    "typecheck:e2e": "tsc -p tsconfig.playwright.json",
     "inline-css": "tsx --tsconfig tsconfig.scripts.json scripts/inline-css.ts",
     "bundle-html": "tsx --tsconfig tsconfig.scripts.json scripts/bundle-html.ts",
     "dist": "npm run build && npm run inline-css && npm run bundle-html",
@@ -25,11 +29,11 @@
     "@types/node": "^24.8.1",
     "@vanilla-extract/css": "^1.17.4",
     "@vanilla-extract/esbuild-plugin": "^2.3.18",
-    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/coverage-v8": "^4.1.8",
     "esbuild": "^0.25.11",
-    "happy-dom": "^20.0.5",
+    "happy-dom": "^20.10.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.8"
   }
 }

@@ -1,5 +1,5 @@
 import { TARGET_PARAM } from "./constants";
-import { isValidPower } from "./logic";
+import { parsePowerInput } from "./logic";
 
 export function parseTargetFromQuery(): number | null {
   const params = new URLSearchParams(window.location.search);
@@ -7,8 +7,7 @@ export function parseTargetFromQuery(): number | null {
   if (!raw) {
     return null;
   }
-  const value = Number(raw);
-  return isValidPower(value) ? value : null;
+  return parsePowerInput(raw);
 }
 
 export function removeTargetParam(): void {

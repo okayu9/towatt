@@ -22,9 +22,8 @@ export function createRenderer(elements: AppElements, locale: LocaleDictionary) 
   }
 
   function renderTargetState(state: AppState): void {
-    if (state.targetPower !== null) {
-      elements.setupTargetInput.value = String(state.targetPower);
-    }
+    elements.setupTargetInput.value =
+      state.targetPower === null ? "" : String(state.targetPower);
 
     const label = state.targetPower === null ? "---" : String(state.targetPower);
     elements.targetPowerValues.forEach((element) => {

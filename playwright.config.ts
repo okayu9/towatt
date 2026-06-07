@@ -9,6 +9,10 @@ const projects = [
     name: "Chromium",
     use: { ...devices["Desktop Chrome"] },
   },
+  {
+    name: "Mobile Chrome",
+    use: { ...devices["Pixel 5"] },
+  },
 ];
 
 if (!process.env.CI) {

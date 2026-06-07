@@ -4,6 +4,11 @@ export type LocaleDictionary = Record<string, string>;
 
 export const defaultLocale: LocaleDictionary = defaultLocaleData as LocaleDictionary;
 
+const HTML_LOCALE_KEYS = new Set([
+  "privacy.section.analytics.body",
+  "privacy.section.optout.body",
+]);
+
 declare global {
   interface Window {
     towattLocale?: Record<string, string> | undefined;
@@ -13,7 +18,10 @@ declare global {
 export function getActiveLocale(): LocaleDictionary {
   const overrides = typeof window !== "undefined" ? window.towattLocale : undefined;
   if (overrides && typeof overrides === "object") {
-    return { ...defaultLocale, ...overrides };
+    const safeOverrides = Object.fromEntries(
+      Object.entries(overrides).filter(([key]) => !HTML_LOCALE_KEYS.has(key)),
+    );
+    return { ...defaultLocale, ...safeOverrides };
   }
   return { ...defaultLocale };
 }
@@ -47,7 +55,7 @@ export function applyDocumentLocale(dictionary: LocaleDictionary): void {
     }
     const htmlMode = element.dataset.localeMode === "html";
     const value = translate(dictionary, key);
-    if (htmlMode) {
+    if (htmlMode && HTML_LOCALE_KEYS.has(key)) {
       element.innerHTML = value;
     } else {
       element.textContent = value;

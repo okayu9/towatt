@@ -4,7 +4,6 @@ import type { AppStore } from "./state";
 import type {
   AppState,
   CalculationResult,
-  CalculationStep,
   SourceSelection,
 } from "./types";
 
@@ -85,15 +84,6 @@ function runTransaction(
 }
 
 export function createStateActions(store: AppStore) {
-  function goToStep(step: CalculationStep): void {
-    runTransaction(store, (state) => {
-      if (state.viewMode !== "calculation" || state.calculationStep === step) {
-        return { nextState: state };
-      }
-      return { nextState: patchState(state, { calculationStep: step }) };
-    });
-  }
-
   function setTargetPower(value: number): void {
     runTransaction(store, (state) => ({
       nextState: patchState(state, {
@@ -185,11 +175,6 @@ export function createStateActions(store: AppStore) {
     return outcome.issue ?? null;
   }
 
-  function attemptCalculation(): CalculationIssue | null {
-    const outcome = runTransaction(store, (state) => evaluateCalculation(state));
-    return outcome.issue ?? null;
-  }
-
   function setSourcePower(
     power: number | null,
     options: { autoAdvance?: boolean } = {},
@@ -270,9 +255,7 @@ export function createStateActions(store: AppStore) {
 
   return {
     appendDigit,
-    attemptCalculation,
     clearRawInput,
-    goToStep,
     initializeFromTarget,
     removeLastDigit,
     resetToSourceSelection,

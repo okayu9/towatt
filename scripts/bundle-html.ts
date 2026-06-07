@@ -11,6 +11,7 @@ const GA_SNIPPET_WITH_COMMENTS_PATTERN =
   /<!--\s*GOOGLE_ANALYTICS_START\s*-->[\s\S]*?<!--\s*GOOGLE_ANALYTICS_END\s*-->/i;
 const GA_SNIPPET_PATTERN =
   /<script\s+async\s+src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=__GA_MEASUREMENT_ID__"\s*><\/script>\s*<script>[\s\S]*?__GA_MEASUREMENT_ID__[\s\S]*?<\/script>/i;
+const GA_MEASUREMENT_ID_PATTERN = /^G-[A-Z0-9]+$/;
 
 function injectGaMeasurementId(html: string): string {
   const gaMeasurementId = process.env.GA_MEASUREMENT_ID?.trim();
@@ -19,6 +20,10 @@ function injectGaMeasurementId(html: string): string {
     return html
       .replace(GA_SNIPPET_WITH_COMMENTS_PATTERN, "")
       .replace(GA_SNIPPET_PATTERN, "");
+  }
+
+  if (!GA_MEASUREMENT_ID_PATTERN.test(gaMeasurementId)) {
+    throw new Error("GA_MEASUREMENT_ID must use the G-XXXXXXXXXX format.");
   }
 
   return html.replace(GA_PLACEHOLDER_PATTERN, gaMeasurementId);
