@@ -51,6 +51,18 @@ describe("createStateActions", () => {
     expect(state.lastResult?.targetSeconds).toBe(628);
   });
 
+  it("returns non-positive for a zero heating time", () => {
+    actions.setTargetPower(targetPower);
+    actions.setSourcePower(sourcePower);
+
+    "000".split("").forEach((digit) => actions.appendDigit(digit));
+    const issue = actions.appendDigit("0");
+
+    expect(issue).toBe("non-positive");
+    expect(store.getState().lastResult).toBeNull();
+    expect(store.getState().calculationStep).toBe("time");
+  });
+
   it("returns missing-input when required values are not ready", () => {
     actions.setTargetPower(targetPower);
     const issue = actions.appendDigit("0");
@@ -70,6 +82,20 @@ describe("createStateActions", () => {
     actions.clearRawInput();
 
     const state = store.getState();
+    expect(state.rawTimeInput).toBe("");
+    expect(state.lastResult).toBeNull();
+    expect(state.calculationStep).toBe("time");
+  });
+
+  it("changing source power after a result clears time input and result", () => {
+    actions.setTargetPower(targetPower);
+    actions.setSourcePower(sourcePower);
+    "1234".split("").forEach((digit) => actions.appendDigit(digit));
+
+    actions.setSourcePower(700);
+
+    const state = store.getState();
+    expect(state.sourcePower).toBe(700);
     expect(state.rawTimeInput).toBe("");
     expect(state.lastResult).toBeNull();
     expect(state.calculationStep).toBe("time");

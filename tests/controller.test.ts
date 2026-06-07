@@ -114,6 +114,7 @@ describe("createAppController", () => {
 
   afterEach(() => {
     document.body.innerHTML = "";
+    window.location.href = "https://example.com/";
   });
 
   it("shows an error when target input is invalid", () => {
@@ -183,6 +184,37 @@ describe("createAppController", () => {
 
     expect(store.getState().calculationStep).toBe("source");
     expect(analytics.trackCalculationReset).toHaveBeenCalledWith("edit-source-button");
+  });
+
+  it("initializes target power from the target query parameter", () => {
+    window.location.href = "https://example.com/?target=700";
+    const store = createAppStore(createInitialState());
+    const elements = createElements();
+    const render = vi.fn();
+    const locale = getActiveLocale();
+
+    const controller = createAppController({ store, elements, render, locale });
+    controller.initialize();
+
+    expect(store.getState().targetPower).toBe(700);
+    expect(store.getState().viewMode).toBe("calculation");
+    expect(analytics.trackTargetPowerConfirmed).toHaveBeenCalledWith(700, "url-param");
+  });
+
+  it("removes invalid target query parameters during initialization", () => {
+    window.location.href = "https://example.com/?target=1e3";
+    const replaceSpy = vi.spyOn(window.history, "replaceState");
+    const store = createAppStore(createInitialState());
+    const elements = createElements();
+    const render = vi.fn();
+    const locale = getActiveLocale();
+
+    const controller = createAppController({ store, elements, render, locale });
+    controller.initialize();
+
+    expect(store.getState().targetPower).toBeNull();
+    expect(replaceSpy).toHaveBeenCalledWith(null, "", "https://example.com/");
+    replaceSpy.mockRestore();
   });
 
   it("clears committed manual source power when the draft becomes invalid", () => {
