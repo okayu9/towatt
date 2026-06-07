@@ -32,8 +32,8 @@ export function createAppController({ store, elements, render, locale }: Control
   const actions = createStateActions(store);
   const errorNotifier = createBannerNotifier(elements.errorBanner, NOTICE_DURATION_MS);
 
-  function showError(message: string): void {
-    trackErrorShown(message);
+  function showError(message: string, error: string): void {
+    trackErrorShown(error);
     errorNotifier.show(message);
   }
 
@@ -43,10 +43,10 @@ export function createAppController({ store, elements, render, locale }: Control
     }
     trackCalculationIssue(issue);
     if (issue === "missing-input") {
-      showError(translate(locale, "errors.missing"));
+      showError(translate(locale, "errors.missing"), "missing-input");
       return;
     }
-    showError(translate(locale, "errors.nonPositive"));
+    showError(translate(locale, "errors.nonPositive"), "non-positive");
   }
 
   function focusManualSourceInput(): void {
@@ -70,7 +70,7 @@ export function createAppController({ store, elements, render, locale }: Control
     event.preventDefault();
     const value = parsePowerInput(elements.setupTargetInput.value);
     if (value === null) {
-      showError(translate(locale, "errors.invalidRange"));
+      showError(translate(locale, "errors.invalidRange"), "invalid-target-power");
       return;
     }
     actions.setTargetPower(value);
@@ -142,7 +142,7 @@ export function createAppController({ store, elements, render, locale }: Control
     const numericValue = parsePowerInput(trimmed);
     if (numericValue === null) {
       trackSourcePowerInvalid(/^\d+$/.test(trimmed) ? "out_of_range" : "non_numeric");
-      showError(translate(locale, "errors.invalidRange"));
+      showError(translate(locale, "errors.invalidRange"), "invalid-source-power");
       focusManualSourceInput();
       return;
     }

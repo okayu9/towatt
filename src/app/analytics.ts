@@ -94,8 +94,8 @@ export function trackCalculationReset(trigger: string): void {
   trackEvent("calculation_reset", { trigger });
 }
 
-export function trackErrorShown(message: string): void {
-  trackEvent("ui_error_shown", { message });
+export function trackErrorShown(error: string): void {
+  trackEvent("ui_error_shown", { error });
 }
 
 export function trackSourceSelectionChange(selection: SourceSelection): void {

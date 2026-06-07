@@ -132,7 +132,7 @@ describe("createAppController", () => {
 
     expect(store.getState().targetPower).toBeNull();
     const invalidRange = translate(locale, "errors.invalidRange");
-    expect(analytics.trackErrorShown).toHaveBeenCalledWith(invalidRange);
+    expect(analytics.trackErrorShown).toHaveBeenCalledWith("invalid-target-power");
     expect(elements.errorBanner.hidden).toBe(false);
     expect(elements.errorBanner.textContent).toBe(invalidRange);
 

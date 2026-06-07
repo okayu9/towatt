@@ -27,6 +27,14 @@ describe("analytics", () => {
     expect(window.dataLayer).toEqual([{ event: "fallback", detail: "ok" }]);
   });
 
+  it("tracks UI errors by stable error identifier", () => {
+    analytics.trackErrorShown("invalid-target-power");
+
+    expect(window.dataLayer).toEqual([
+      { event: "ui_error_shown", error: "invalid-target-power" },
+    ]);
+  });
+
   it("tracks store state changes", () => {
     const gtagMock = vi.fn();
     window.gtag = gtagMock as unknown as typeof window.gtag;
