@@ -85,9 +85,11 @@ Automated tests are powered by [Vitest](https://vitest.dev) (unit/integration) a
 
 | Command | Description |
 | --- | --- |
+| `npm run typecheck` | Type-check the application, build scripts, and Playwright specs without emitting files. |
 | `npm run test` | Run the Vitest suite once in CI mode. |
 | `npm run test:watch` | Start Vitest in watch mode for local development. |
 | `npm test -- --coverage` | Collect coverage metrics with V8 instrumentation. |
+| `npm audit --audit-level=moderate` | Check dependency advisories at moderate severity or higher. |
 | `npm run playwright:install` | Install browser binaries required for Playwright. |
 | `npm run test:e2e` | Execute Playwright tests (requires the dist webserver). |
 

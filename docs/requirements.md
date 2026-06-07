@@ -12,7 +12,8 @@
 
 ## Input Rules
 - Label wattage selection offers presets (1500W / 700W / 600W / 500W) plus a manual numeric input.
-- Manual wattage input accepts integers between 100 and 3000 inclusive, without additional step constraints.
+- Manual wattage input accepts base-10 integer digit strings between 100 and 3000 inclusive, without additional step constraints.
+- Wattage inputs do not accept decimal notation, exponent notation, signs, or unit suffixes.
 - Heating time is entered via an on-screen keypad as a four-digit value (`0130` → 1 minute 30 seconds).
 - Conversion does not run until four digits are entered; guidance is shown while input is incomplete.
 - Once four digits are available, the UI transitions to the result view automatically.
@@ -29,4 +30,3 @@
 - Layout favors one-handed smartphone operation with large buttons and generous touch targets.
 - Automatic transition from input to result view once the required digits are entered.
 - Application state relies on URL query parameters so repeated visits reproduce the same experience.
-
