@@ -53,6 +53,16 @@ describe("createRenderer", () => {
     expect(elements.presetButtons[0].classList.contains("is-active")).toBe(true);
   });
 
+  it("clears target input when target power is not set", () => {
+    const elements = createAppElementsStub();
+    const render = createRenderer(elements, locale);
+    elements.setupTargetInput.value = "600";
+
+    render(createInitialState());
+
+    expect(elements.setupTargetInput.value).toBe("");
+  });
+
   it("updates the time input preview and placeholders", () => {
     const baseState = createInitialState();
     const state: AppState = {
