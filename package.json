@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Microwave heating time converter",
   "scripts": {
-    "clean": "rm -rf build dist",
+    "clean": "tsx --tsconfig tsconfig.scripts.json scripts/clean.ts",
     "build:bundle": "tsx --tsconfig tsconfig.scripts.json scripts/build-app.ts",
     "build": "npm run clean && npm run build:bundle",
     "inline-css": "tsx --tsconfig tsconfig.scripts.json scripts/inline-css.ts",
