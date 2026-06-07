@@ -21,6 +21,9 @@ describe("routing", () => {
 
     window.location.href = `${baseUrl}?target=foo`;
     expect(parseTargetFromQuery()).toBeNull();
+
+    window.location.href = `${baseUrl}?target=1e3`;
+    expect(parseTargetFromQuery()).toBeNull();
   });
 
   it("updates the URL via updateTargetParam", () => {

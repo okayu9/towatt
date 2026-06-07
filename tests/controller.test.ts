@@ -184,4 +184,30 @@ describe("createAppController", () => {
     expect(store.getState().calculationStep).toBe("source");
     expect(analytics.trackCalculationReset).toHaveBeenCalledWith("edit-source-button");
   });
+
+  it("clears committed manual source power when the draft becomes invalid", () => {
+    const store = createAppStore(createInitialState());
+    const elements = createElements();
+    const render = vi.fn();
+    const locale = getActiveLocale();
+
+    const controller = createAppController({ store, elements, render, locale });
+    controller.initialize();
+
+    elements.setupTargetInput.value = "600";
+    submitForm(elements.setupForm);
+
+    elements.manualSourceInput.value = "800";
+    elements.manualSourceInput.dispatchEvent(new Event("input", { bubbles: true }));
+    elements.manualSourceInput.dispatchEvent(new Event("blur", { bubbles: true }));
+
+    expect(store.getState().sourcePower).toBe(800);
+
+    elements.manualSourceInput.value = "1e3";
+    elements.manualSourceInput.dispatchEvent(new Event("input", { bubbles: true }));
+
+    expect(store.getState().sourceSelection).toBe("manual");
+    expect(store.getState().sourcePower).toBeNull();
+    expect(analytics.trackSourcePowerInvalid).toHaveBeenCalledWith("non_numeric");
+  });
 });

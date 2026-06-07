@@ -11,7 +11,7 @@ import {
 import { NOTICE_DURATION_MS, PRESET_POWERS } from "./constants";
 import { createStateActions, type CalculationIssue } from "./actions";
 import { AppElements, hydratePresetButtons } from "./dom";
-import { isValidPower } from "./logic";
+import { isValidPower, parsePowerInput } from "./logic";
 import { createBannerNotifier } from "./notifications";
 import { parseTargetFromQuery, removeTargetParam, updateTargetParam } from "./routing";
 import type { AppStore } from "./state";
@@ -68,9 +68,8 @@ export function createAppController({ store, elements, render, locale }: Control
 
   function handleSetupSubmit(event: Event): void {
     event.preventDefault();
-    const trimmed = elements.setupTargetInput.value.trim();
-    const value = Number(trimmed);
-    if (!isValidPower(value)) {
+    const value = parsePowerInput(elements.setupTargetInput.value);
+    if (value === null) {
       showError(translate(locale, "errors.invalidRange"));
       return;
     }
@@ -116,17 +115,11 @@ export function createAppController({ store, elements, render, locale }: Control
       return;
     }
 
-    const numericValue = Number(trimmed);
-    if (!Number.isFinite(numericValue)) {
+    const numericValue = parsePowerInput(trimmed);
+    if (numericValue === null) {
       actions.setSourceSelection("manual");
-      trackSourcePowerInvalid("non_numeric");
-      return;
-    }
-
-    actions.setSourceSelection("manual");
-
-    if (!isValidPower(numericValue)) {
-      trackSourcePowerInvalid("out_of_range");
+      actions.setSourcePower(null, { autoAdvance: false });
+      trackSourcePowerInvalid(/^\d+$/.test(trimmed) ? "out_of_range" : "non_numeric");
       return;
     }
 
@@ -146,11 +139,9 @@ export function createAppController({ store, elements, render, locale }: Control
       return;
     }
 
-    const numericValue = Number(trimmed);
-    const isFiniteValue = Number.isFinite(numericValue);
-    const isWithinRange = isValidPower(numericValue);
-    if (!isFiniteValue || !isWithinRange) {
-      trackSourcePowerInvalid(isFiniteValue ? "out_of_range" : "non_numeric");
+    const numericValue = parsePowerInput(trimmed);
+    if (numericValue === null) {
+      trackSourcePowerInvalid(/^\d+$/.test(trimmed) ? "out_of_range" : "non_numeric");
       showError(translate(locale, "errors.invalidRange"));
       focusManualSourceInput();
       return;

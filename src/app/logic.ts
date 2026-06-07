@@ -5,6 +5,15 @@ export function isValidPower(value: number): boolean {
   return Number.isInteger(value) && value >= POWER_MIN && value <= POWER_MAX;
 }
 
+export function parsePowerInput(raw: string): number | null {
+  const trimmed = raw.trim();
+  if (!/^\d+$/.test(trimmed)) {
+    return null;
+  }
+  const value = Number(trimmed);
+  return isValidPower(value) ? value : null;
+}
+
 export function parseRawTime(raw: string): TimeParts {
   const padded = raw.padStart(TIME_DIGITS, "0");
   const minutesPart = Number(padded.slice(0, 2));

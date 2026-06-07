@@ -4,6 +4,7 @@ import {
   calculateTargetSeconds,
   formatClock,
   isValidPower,
+  parsePowerInput,
   parseRawTime,
 } from "../src/app/logic";
 
@@ -19,6 +20,20 @@ describe("isValidPower", () => {
     expect(isValidPower(POWER_MIN - 1)).toBe(false);
     expect(isValidPower(POWER_MAX + 1)).toBe(false);
     expect(isValidPower(500.5)).toBe(false);
+  });
+});
+
+describe("parsePowerInput", () => {
+  it("accepts integer digit strings within range", () => {
+    expect(parsePowerInput("600")).toBe(600);
+    expect(parsePowerInput(" 0500 ")).toBe(500);
+  });
+
+  it("rejects non-decimal integer formats and out-of-range values", () => {
+    expect(parsePowerInput("1e3")).toBeNull();
+    expect(parsePowerInput("600.0")).toBeNull();
+    expect(parsePowerInput("99")).toBeNull();
+    expect(parsePowerInput("3001")).toBeNull();
   });
 });
 
